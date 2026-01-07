@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "../web/theme-toggle";
+import { authClient } from "@/lib/auth-client";
+import { toast } from "sonner";
 
 interface AdminNavbarProps {
   onMenuClick: () => void;
@@ -72,11 +74,24 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
                 Settings
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/auth" className="flex items-center gap-2">
-                <LogOut className="h-4 w-4" />
-                Logout
-              </Link>
+            <DropdownMenuItem
+              className="flex items-center gap-2 cursor-pointer"
+              onClick={async () => {
+                await authClient.signOut({
+                  fetchOptions: {
+                    onSuccess: () => {
+                      toast.success("Logged out successfully");
+                      window.location.href = "/auth"; // hard redirect = clean state
+                    },
+                    onError: (error) => {
+                      toast.error(error.error.message || "Logout failed");
+                    },
+                  },
+                });
+              }}
+            >
+              <LogOut className="h-4 w-4" />
+              Logout
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

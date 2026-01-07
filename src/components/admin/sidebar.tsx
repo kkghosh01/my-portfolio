@@ -53,8 +53,9 @@ function SidebarContent({ collapsed }: { collapsed?: boolean }) {
       <Link href={href}>
         <CommandItem
           className={cn(
-            "flex items-center gap-3",
-            active && "bg-primary/10 text-primary"
+            "flex items-center gap-3 cursor-pointer transition-colors duration-150 ease-in-out",
+            "data-[selected=true]:bg-muted/70",
+            active && "bg-primary/10 text-primary font-medium"
           )}
         >
           <Icon className="h-5 w-5 shrink-0" />
@@ -68,15 +69,15 @@ function SidebarContent({ collapsed }: { collapsed?: boolean }) {
     <Command className="h-full rounded-none bg-muted/40">
       <CommandList>
         <CommandGroup heading={!collapsed ? "Dashboard" : undefined}>
+          <Item href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
+          <Item href="/dashboard/posts" icon={Newspaper} label="All Posts" />
           <Item
-            href="/admin/dashboard"
-            icon={LayoutDashboard}
-            label="Dashboard"
+            href="/dashboard/projects"
+            icon={FolderOpen}
+            label="All Projects"
           />
-          <Item href="/admin/posts" icon={Newspaper} label="Posts" />
-          <Item href="/admin/projects" icon={FolderOpen} label="Projects" />
           <Item
-            href="/admin/categories"
+            href="/dashboard/categories"
             icon={ChartBarStacked}
             label="Categories"
           />

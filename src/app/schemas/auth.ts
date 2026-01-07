@@ -20,3 +20,9 @@ export const registerSchema = z.object({
     .regex(/[0-9]/, { message: "Must include one number" })
     .regex(/[@$!%*?&]/, { message: "Must include one special character" }),
 });
+
+export const loginSchema = z.object({
+  email: z.email({ message: "Invalid email address" }).toLowerCase(),
+
+  password: z.string().min(1, { message: "Password is required" }),
+});

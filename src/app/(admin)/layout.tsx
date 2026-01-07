@@ -1,48 +1,20 @@
-"use client";
+import { redirect } from "next/navigation";
+import { fetchAuthQuery } from "@/lib/auth-server";
 
-import { useState } from "react";
-import AdminNavbar from "@/components/admin/adminNavbar";
-import Sidebar from "@/components/admin/sidebar";
+import AdminShell from "./AdminShell";
+import { api } from "../../../convex/_generated/api";
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const user = await fetchAuthQuery(api.auth.getCurrentUser, {});
 
-  return (
-    <>
-      <AdminNavbar onMenuClick={() => setMobileOpen(true)} />
+  if (!user || user.email !== process.env.ADMIN_EMAIL) {
+    redirect("/auth");
+  }
 
-      <div className="flex min-h-screen">
-        {/* Desktop sidebar */}
-        <aside
-          className={`
-            hidden md:block
-            border-r
-            transition-all duration-300
-            ${collapsed ? "w-20" : "w-64"}
-          `}
-        >
-          <Sidebar
-            collapsed={collapsed}
-            onToggle={() => setCollapsed(!collapsed)}
-          />
-        </aside>
-
-        {/* Mobile sidebar */}
-        <Sidebar
-          mobile
-          open={mobileOpen}
-          onClose={() => setMobileOpen(false)}
-        />
-
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-7xl mx-auto p-6">{children}</div>
-        </main>
-      </div>
-    </>
-  );
+  // user verified, now render client shell
+  return <AdminShell>{children}</AdminShell>;
 }

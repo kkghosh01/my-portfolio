@@ -15,8 +15,11 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -31,6 +34,17 @@ export default function RegisterForm() {
       email: data.email,
       name: data.name,
       password: data.password,
+      fetchOptions: {
+        onSuccess: () => {
+          toast.success("Registered successfully! Please log in.");
+          router.push("/auth");
+        },
+        onError: (error) => {
+          toast.error(
+            error.error.message || "Registration failed. Please try again."
+          );
+        },
+      },
     });
   }
   return (
