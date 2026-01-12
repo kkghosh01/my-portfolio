@@ -151,7 +151,7 @@ export default async function BlogDetails({ params }: PageProps) {
       </div>
 
       <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
-        <LikeButton postId={post._id} likes={post.likes || 0} />
+        <LikeButton postId={post._id} initialLikes={post.likes ?? 0} />
       </div>
     </article>
   );

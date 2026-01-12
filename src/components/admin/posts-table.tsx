@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useMutation } from "convex/react";
 import { Id } from "../../../convex/_generated/dataModel";
 import { api } from "../../../convex/_generated/api";
+import { publishPostAction } from "@/app/actions";
 
 import {
   Table,
@@ -62,6 +63,8 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
 
     try {
       await publishPost({ postId });
+      // Revalidate blog pages on demand
+      await publishPostAction(postId);
       toast.success("Post published");
     } catch {
       setLocalPosts(posts);
@@ -80,6 +83,8 @@ export default function PostsTable({ posts }: { posts: Post[] }) {
       try {
         ids.forEach((id) => optimisticStatus(id, "published"));
         await Promise.all(ids.map((id) => publishPost({ postId: id })));
+        // Revalidate blog pages after bulk publish
+        await Promise.all(ids.map((id) => publishPostAction(id)));
         toast.success(`${ids.length} posts published`);
         setSelected(new Set());
       } catch {

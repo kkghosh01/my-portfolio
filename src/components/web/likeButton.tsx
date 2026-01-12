@@ -1,98 +1,103 @@
 "use client";
+
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
 import { Id } from "../../../convex/_generated/dataModel";
 
-const STORAGE_KEY = "portfolio_liked_posts";
+/* ---------- anonymous id ---------- */
+const ANON_KEY = "portfolio_anon_id";
 
-function getLikedPosts(): Set<string> {
-  if (typeof window === "undefined") return new Set();
-  const stored = localStorage.getItem(STORAGE_KEY);
-  return new Set(stored ? JSON.parse(stored) : []);
+function getAnonId() {
+  if (typeof window === "undefined") return "";
+  let id = localStorage.getItem(ANON_KEY);
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem(ANON_KEY, id);
+  }
+  return id;
 }
 
-function saveLikedPosts(likedSet: Set<string>) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify([...likedSet]));
-}
-
-function LikeButtonInner({
+export function LikeButton({
   postId,
   initialLikes,
 }: {
   postId: Id<"posts">;
   initialLikes: number;
 }) {
-  const [likes, setLikes] = useState(initialLikes);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const toggleLikeMutation = useMutation(api.posts.toggleLike);
+  const toggleLike = useMutation(api.posts.toggleLike);
 
+  const [likes, setLikes] = useState(initialLikes);
+  const [liked, setLiked] = useState<boolean | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  /* restore liked state on mount */
   useEffect(() => {
-    const likedPosts = getLikedPosts();
-    setIsLiked(likedPosts.has(postId));
+    const saved = localStorage.getItem(`liked:${postId}`);
+    setLiked(saved === "1");
   }, [postId]);
 
-  const handleToggleLike = async () => {
-    const wasLiked = isLiked;
-    const previousLikes = likes;
+  async function handleLike() {
+    if (loading || liked === null) return;
 
-    // Optimistic update
-    setIsLiked(!wasLiked);
-    setLikes(wasLiked ? previousLikes - 1 : previousLikes + 1);
+    const prevLiked = liked;
+    const prevLikes = likes;
 
-    setIsLoading(true);
+    // optimistic UI - update immediately
+    const newLiked = !prevLiked;
+    const newLikes = prevLiked ? prevLikes - 1 : prevLikes + 1;
+
+    setLiked(newLiked);
+    setLikes(newLikes);
+    setLoading(true);
+
     try {
-      // Update localStorage
-      const likedPosts = getLikedPosts();
-      if (wasLiked) {
-        likedPosts.delete(postId);
-      } else {
-        likedPosts.add(postId);
-      }
-      saveLikedPosts(likedPosts);
+      const res = await toggleLike({
+        postId,
+        anonymousId: getAnonId(),
+      });
 
-      // Call backend
-      await toggleLikeMutation({ postId });
+      console.log("Like toggle response:", res);
+
+      // Handle the response - ensure it's not null
+      if (res) {
+        setLiked(res.liked);
+        setLikes(res.likes);
+        localStorage.setItem(`liked:${postId}`, res.liked ? "1" : "0");
+      } else {
+        // If response is null, use optimistic values
+        console.warn("Response was null, using optimistic values");
+        localStorage.setItem(`liked:${postId}`, newLiked ? "1" : "0");
+      }
     } catch (error) {
-      console.error("Failed to toggle like:", error);
-      // Revert on error
-      setIsLiked(wasLiked);
-      setLikes(previousLikes);
+      // rollback on error
+      console.error("Like toggle failed:", error);
+      setLiked(prevLiked);
+      setLikes(prevLikes);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
-  };
+  }
+
+  if (liked === null) {
+    return (
+      <Button variant="outline" disabled className="gap-2 opacity-60">
+        {likes} Likes
+      </Button>
+    );
+  }
 
   return (
     <Button
-      onClick={handleToggleLike}
-      disabled={isLoading}
-      variant={isLiked ? "ghost" : "outline"}
-      className="gap-2 mt-8"
+      onClick={handleLike}
+      disabled={loading}
+      variant={liked ? "ghost" : "outline"}
+      className="gap-2"
     >
-      {isLiked && <Heart className="h-4 w-4 fill-red-500 text-red-500" />}
+      {liked && <Heart className="h-4 w-4 fill-red-500 text-red-500" />}
       {likes} {likes === 1 ? "Like" : "Likes"}
     </Button>
   );
-}
-
-export function LikeButton({
-  postId,
-  likes,
-}: {
-  postId: Id<"posts">;
-  likes: number;
-}) {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  return isMounted ? (
-    <LikeButtonInner postId={postId} initialLikes={likes} />
-  ) : null;
 }

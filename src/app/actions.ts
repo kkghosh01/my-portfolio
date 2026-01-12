@@ -78,3 +78,27 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
   revalidatePath("/blog");
   return redirect("/dashboard/posts");
 }
+
+export async function publishPostAction(postId: string) {
+  try {
+    const token = await getToken();
+
+    // Call the Convex mutation
+    await fetchMutation(
+      api.posts.publishPost,
+      { postId: postId as any },
+      { token }
+    );
+
+    // Revalidate blog pages to show the newly published post
+    revalidatePath("/blog");
+    revalidatePath("/");
+
+    return { success: true };
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Failed to publish post";
+    console.error("Failed to publish post:", errorMessage);
+    return { error: errorMessage };
+  }
+}

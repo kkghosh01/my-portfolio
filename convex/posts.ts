@@ -96,8 +96,12 @@ export const publishPost = mutation({
       throw new ConvexError("Post not found");
     }
 
+    // If already published, just update the timestamp and return
     if (post.status === "published") {
-      throw new ConvexError("Already published");
+      await ctx.db.patch(postId, {
+        updatedAt: Date.now(),
+      });
+      return;
     }
 
     await ctx.db.patch(postId, {
@@ -273,38 +277,47 @@ export const incrementView = mutation({
 });
 
 export const toggleLike = mutation({
-  args: { postId: v.id("posts") },
-  handler: async (ctx, { postId }) => {
-    const identity = await authComponent.safeGetAuthUser(ctx);
-
-    // Allow anonymous users with a unique identifier
-    const userId =
-      identity?.userId ??
-      `anonymous-${Math.random().toString(36).substring(7)}`;
-
+  args: {
+    postId: v.id("posts"),
+    anonymousId: v.string(),
+  },
+  handler: async (ctx, { postId, anonymousId }) => {
     const post = await ctx.db.get(postId);
-    if (!post) return;
+    if (!post) throw new Error("Post not found");
 
-    // Check if user already liked this post
-    const existingLike = await ctx.db
+    const existing = await ctx.db
       .query("likes")
       .withIndex("by_user_post", (q) =>
-        q.eq("userId", userId).eq("postId", postId)
+        q.eq("userId", anonymousId).eq("postId", postId)
       )
       .unique();
 
-    if (existingLike) {
-      // User already liked, remove the like
-      await ctx.db.delete(existingLike._id);
-      await ctx.db.patch(postId, {
-        likes: Math.max(0, (post.likes ?? 0) - 1),
-      });
+    let liked: boolean;
+    let newLikes: number;
+
+    if (existing) {
+      // User already liked - remove the like
+      await ctx.db.delete(existing._id);
+      newLikes = Math.max(0, post.likes - 1);
+      liked = false;
     } else {
-      // User hasn't liked, add the like
-      await ctx.db.insert("likes", { userId, postId });
-      await ctx.db.patch(postId, {
-        likes: (post.likes ?? 0) + 1,
+      // User hasn't liked - add the like
+      await ctx.db.insert("likes", {
+        userId: anonymousId,
+        postId,
       });
+      newLikes = post.likes + 1;
+      liked = true;
     }
+
+    // Update post likes count
+    await ctx.db.patch(postId, {
+      likes: newLikes,
+    });
+
+    return {
+      liked,
+      likes: newLikes,
+    };
   },
 });

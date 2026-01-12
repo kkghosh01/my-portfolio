@@ -11,12 +11,22 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
 export function Navbar() {
+  // ✅ ALL hooks first
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // ✅ safe hydration guard
+  if (!mounted) return null;
 
   function NavLink({
     href,
@@ -25,8 +35,8 @@ export function Navbar() {
     href: string;
     children: React.ReactNode;
   }) {
-    const pathName = usePathname();
-    const isActive = pathName === href;
+    const isActive = pathname === href;
+
     return (
       <Link
         href={href}
@@ -58,8 +68,9 @@ export function Navbar() {
     >
       <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="text-3xl font-bold tracking-tighter">
-          Kishor's<span className="text-primary">Code</span>
+          Kishor&apos;s<span className="text-primary">Code</span>
         </Link>
+
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center lg:gap-2">
           <NavLink href="/">Home</NavLink>
@@ -68,6 +79,7 @@ export function Navbar() {
           <NavLink href="/blog">Blog</NavLink>
           <NavLink href="/contact">Contact</NavLink>
         </div>
+
         <div className="hidden md:flex items-center gap-2 lg:gap-6">
           <Link
             href="/contact"
@@ -82,8 +94,8 @@ export function Navbar() {
           </Link>
           <ThemeToggle />
         </div>
-        {/* Mobile Navigation */}
 
+        {/* Mobile Navigation */}
         <div className="md:hidden flex items-center gap-2">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
@@ -91,6 +103,7 @@ export function Navbar() {
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
+
             <SheetContent side="right">
               <div className="sr-only">
                 <SheetTitle>Mobile navigation</SheetTitle>
@@ -98,42 +111,25 @@ export function Navbar() {
                   Navigation menu for mobile devices
                 </SheetDescription>
               </div>
+
               <div className="flex flex-col gap-4 mt-8">
-                <Link
-                  href="/"
-                  className={buttonVariants({ variant: "ghost" })}
-                  onClick={() => setIsOpen(false)}
-                >
-                  Home
-                </Link>
-                <Link
-                  href="/about"
-                  className={buttonVariants({ variant: "ghost" })}
-                  onClick={() => setIsOpen(false)}
-                >
-                  About
-                </Link>
-                <Link
-                  href="/projects"
-                  className={buttonVariants({ variant: "ghost" })}
-                  onClick={() => setIsOpen(false)}
-                >
-                  Projects
-                </Link>
-                <Link
-                  href="/blog"
-                  className={buttonVariants({ variant: "ghost" })}
-                  onClick={() => setIsOpen(false)}
-                >
-                  Blog
-                </Link>
-                <Link
-                  href="/contact"
-                  className={buttonVariants({ variant: "ghost" })}
-                  onClick={() => setIsOpen(false)}
-                >
-                  Contact
-                </Link>
+                {[
+                  ["/", "Home"],
+                  ["/about", "About"],
+                  ["/projects", "Projects"],
+                  ["/blog", "Blog"],
+                  ["/contact", "Contact"],
+                ].map(([href, label]) => (
+                  <Link
+                    key={href}
+                    href={href}
+                    className={buttonVariants({ variant: "ghost" })}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                ))}
+
                 <Link
                   href="/contact"
                   className={buttonVariants({ variant: "default" })}
@@ -142,6 +138,7 @@ export function Navbar() {
                   Hire me
                   <ArrowUpRight className="mr-2 h-4 w-4" />
                 </Link>
+
                 <Link
                   href="/cv"
                   className={buttonVariants({ variant: "outline" })}
@@ -153,9 +150,8 @@ export function Navbar() {
               </div>
             </SheetContent>
           </Sheet>
-          <div className="md:hidden">
-            <ThemeToggle />
-          </div>
+
+          <ThemeToggle />
         </div>
       </div>
     </nav>
