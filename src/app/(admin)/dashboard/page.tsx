@@ -15,12 +15,12 @@ export default function DashBoard() {
         actions={[
           {
             label: "New Post",
-            href: "/dashboard/create-post",
+            href: "/admin/create-post",
             icon: "plus",
           },
           {
             label: "New Project",
-            href: "/dashboard/create-project",
+            href: "/admin/create-project",
             icon: "plus",
           },
         ]}

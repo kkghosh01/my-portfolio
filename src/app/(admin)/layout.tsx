@@ -9,7 +9,13 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const user = await fetchAuthQuery(api.auth.getCurrentUser, {});
+  let user = null;
+
+  try {
+    user = await fetchAuthQuery(api.auth.getCurrentUser, {});
+  } catch {
+    redirect("/auth");
+  }
 
   if (!user || user.email !== process.env.ADMIN_EMAIL) {
     redirect("/auth");

@@ -52,7 +52,10 @@ export function Navbar() {
   }
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur bg-background/70">
+    <nav
+      className="sticky top-0 z-50 backdrop-blur bg-background/70"
+      suppressHydrationWarning
+    >
       <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="text-3xl font-bold tracking-tighter">
           Kishor's<span className="text-primary">Code</span>

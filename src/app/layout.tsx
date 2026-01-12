@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { Navbar } from "../components/web/navbar";
 import { ThemeProvider } from "@/components/ui/theme-provider";
 import { ConvexClientProvider } from "@/components/web/ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -39,8 +38,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ConvexClientProvider>{children}</ConvexClientProvider>
-          <Toaster position="top-right" richColors closeButton />
+          <ConvexClientProvider>
+            {children}
+            <Toaster position="top-right" richColors closeButton />
+          </ConvexClientProvider>
         </ThemeProvider>
       </body>
     </html>
