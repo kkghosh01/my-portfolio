@@ -140,7 +140,7 @@ export const getAdminPosts = query({
           ...post,
           imageUrl: resolvedImageUrl,
         };
-      })
+      }),
     );
   },
 });
@@ -160,7 +160,7 @@ export const getPublishedPosts = query({
         imageUrl: post.imageStorageId
           ? await ctx.storage.getUrl(post.imageStorageId)
           : null,
-      }))
+      })),
     );
   },
 });
@@ -288,7 +288,7 @@ export const toggleLike = mutation({
     const existing = await ctx.db
       .query("likes")
       .withIndex("by_user_post", (q) =>
-        q.eq("userId", anonymousId).eq("postId", postId)
+        q.eq("userId", anonymousId).eq("postId", postId),
       )
       .unique();
 
@@ -319,5 +319,31 @@ export const toggleLike = mutation({
       liked,
       likes: newLikes,
     };
+  },
+});
+
+export const getRecentPosts = query({
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 3 }) => {
+    const posts = await ctx.db
+      .query("posts")
+      .withIndex("by_status", (q) => q.eq("status", "published"))
+      .order("desc")
+      .take(limit);
+
+    return await Promise.all(
+      posts.map(async (post) => {
+        const imageUrl = post.imageStorageId
+          ? await ctx.storage.getUrl(post.imageStorageId)
+          : null;
+
+        return {
+          ...post,
+          imageUrl,
+        };
+      }),
+    );
   },
 });

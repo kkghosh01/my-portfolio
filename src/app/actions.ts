@@ -7,6 +7,12 @@ import { redirect } from "next/navigation";
 import z from "zod";
 import { getToken } from "@/lib/auth-server";
 import { revalidatePath } from "next/cache";
+import { projectSchema } from "./schemas/projectSchema";
+import { Id } from "../../convex/_generated/dataModel";
+
+type ActionResult =
+  | { success: true }
+  | { success: false; message: string; field?: string };
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
@@ -41,7 +47,7 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
     const uploadUrl = await fetchMutation(
       api.posts.generateImageUploadUrl,
       {},
-      { token }
+      { token },
     );
 
     const uploadResult = await fetch(uploadUrl, {
@@ -69,7 +75,7 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
         category: parsed.data.category,
         imageStorageId: storageId,
       },
-      { token }
+      { token },
     );
   } catch (err) {
     return { error: "Failed to create post" };
@@ -87,7 +93,7 @@ export async function publishPostAction(postId: string) {
     await fetchMutation(
       api.posts.publishPost,
       { postId: postId as any },
-      { token }
+      { token },
     );
 
     // Revalidate blog pages to show the newly published post
@@ -100,5 +106,55 @@ export async function publishPostAction(postId: string) {
       err instanceof Error ? err.message : "Failed to publish post";
     console.error("Failed to publish post:", errorMessage);
     return { error: errorMessage };
+  }
+}
+
+export async function createProjectAction(data: {
+  title: string;
+  slug: string;
+  projectDetails: string;
+  category?: string;
+  liveUrl: string;
+  githubUrl: string;
+  technologies: string[];
+  features: string[];
+  imageStorageIds: Id<"_storage">[];
+  seoTitle?: string;
+  seoDescription?: string;
+}) {
+  try {
+    const token = await getToken();
+
+    await fetchMutation(api.projects.createProject, data, { token });
+
+    revalidatePath("/dashboard/projects");
+
+    return { success: true };
+  } catch (err) {
+    const errorMessage =
+      err instanceof Error ? err.message : "Failed to create project";
+    return { success: false, message: errorMessage };
+  }
+}
+
+export async function publishProjectAction(projectId: Id<"projects">) {
+  try {
+    const token = await getToken();
+
+    const res = await fetchMutation(
+      api.projects.publishProject,
+      { projectId },
+      { token },
+    );
+
+    revalidatePath("/dashboard/projects");
+    revalidatePath("/projects");
+
+    return res; // { status: "published" | "already_published" }
+  } catch (err) {
+    return {
+      status: "error",
+      message: err instanceof Error ? err.message : "Failed to publish project",
+    };
   }
 }
