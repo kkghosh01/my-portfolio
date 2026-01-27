@@ -5,7 +5,36 @@ import Image from "next/image";
 import { api } from "../../../../../convex/_generated/api";
 import { User, Calendar, ExternalLink, Github } from "lucide-react";
 import { ImageGallery } from "@/components/web/ImageGallery";
+import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
 // import { ImageGallery } from "@/components/ImageGallery";
+
+interface PageProps {
+  params: { slug: string };
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const project = await fetchQuery(api.projects.getProjectBySlug, {
+    slug,
+  });
+
+  if (!project) return {};
+  return {
+    title: project.seoTitle || project.title,
+    description: project.projectDetails.slice(0, 150),
+    openGraph: {
+      title: project.title,
+      description: project.projectDetails ?? undefined,
+      images: project.imageUrls ? [{ url: project.imageUrls[0] }] : undefined,
+    },
+
+    alternates: {
+      canonical: `/projects/${project.slug}`,
+    },
+  };
+}
 
 export default async function ProjectDetailsPage({
   params,

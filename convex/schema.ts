@@ -89,4 +89,18 @@ export default defineSchema({
     .index("by_author", ["authorId"])
     // published feed
     .index("by_status", ["status"]),
+
+  contacts: defineTable({
+    name: v.string(),
+    email: v.string(),
+    message: v.string(),
+
+    status: v.union(v.literal("new"), v.literal("replied")),
+
+    createdAt: v.number(),
+    repliedAt: v.optional(v.number()),
+    replyMessage: v.optional(v.string()),
+  })
+    .index("by_created", ["createdAt"])
+    .index("by_status", ["status"]),
 });

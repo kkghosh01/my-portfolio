@@ -12,6 +12,8 @@ import {
   FolderOpen,
   ChartBarStacked,
   ChevronLeft,
+  SquareM,
+  MessageSquare,
 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -55,7 +57,7 @@ function SidebarContent({ collapsed }: { collapsed?: boolean }) {
           className={cn(
             "flex items-center gap-3 cursor-pointer transition-colors duration-150 ease-in-out",
             "data-[selected=true]:bg-muted/70",
-            active && "bg-primary/10 text-primary font-medium"
+            active && "bg-primary/10 text-primary font-medium",
           )}
         >
           <Icon className="h-5 w-5 shrink-0" />
@@ -75,6 +77,11 @@ function SidebarContent({ collapsed }: { collapsed?: boolean }) {
             href="/dashboard/projects"
             icon={FolderOpen}
             label="All Projects"
+          />
+          <Item
+            href="/dashboard/contacts"
+            icon={MessageSquare}
+            label="Contacts"
           />
           <Item
             href="/dashboard/categories"
@@ -121,7 +128,7 @@ export default function Sidebar({
         <ChevronLeft
           className={cn(
             "h-4 w-4 transition-transform",
-            collapsed && "rotate-180"
+            collapsed && "rotate-180",
           )}
         />
       </button>

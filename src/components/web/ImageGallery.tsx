@@ -107,7 +107,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
   // Desktop Layout (Collage)
   return (
     <>
-      <div className="grid grid-cols-4 grid-rows-2 gap-3 h-[500px] rounded-2xl overflow-hidden shadow-2xl">
+      <div className="grid grid-cols-4 grid-rows-2 gap-3 h-125 rounded-2xl overflow-hidden shadow-2xl">
         {images[0] && (
           <button
             onClick={() => handleImageClick(0)}
@@ -122,7 +122,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               sizes="(max-width: 1024px) 100vw, 50vw"
               priority
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-linear-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             <div className="absolute top-4 right-4 p-2 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
               <Maximize2 className="w-5 h-5 text-white" />
             </div>
@@ -172,7 +172,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
             <button
               key={index + 4}
               onClick={() => handleImageClick(index + 4)}
-              className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden group cursor-zoom-in"
+              className="relative w-20 h-20 shrink-0 rounded-lg overflow-hidden group cursor-zoom-in"
               aria-label={`View image ${index + 5}`}
             >
               <Image
