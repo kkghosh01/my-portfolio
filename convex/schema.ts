@@ -102,5 +102,6 @@ export default defineSchema({
     replyMessage: v.optional(v.string()),
   })
     .index("by_created", ["createdAt"])
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .index("by_email", ["email"]),
 });

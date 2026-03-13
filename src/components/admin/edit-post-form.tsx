@@ -52,7 +52,7 @@ export default function EditPostForm({
   const [newImage, setNewImage] = useState<File | null>(null);
 
   const form = useForm<PostFormValues>({
-    resolver: zodResolver(postFormSchema) as any,
+    resolver: zodResolver(postFormSchema),
     defaultValues: post,
   });
 
@@ -137,6 +137,7 @@ export default function EditPostForm({
           {preview && (
             <img
               src={preview}
+              alt="Post cover preview"
               className="h-48 w-full object-cover rounded-lg mb-3"
             />
           )}
@@ -155,10 +156,10 @@ export default function EditPostForm({
         </div>
 
         {/* -------- TEXT FIELDS -------- */}
-        {["title", "slug", "category"].map((name) => (
+        {(["title", "slug", "category"] as const).map((name) => (
           <FormField
             key={name}
-            name={name as any}
+            name={name}
             control={form.control}
             render={({ field }) => (
               <FormItem>

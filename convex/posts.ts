@@ -23,14 +23,14 @@ export const createPost = mutation({
       throw new ConvexError("Unauthorized");
     }
 
-    // // 🔐 Admin check (single-admin system)
-    // const adminEmail = process.env.ADMIN_EMAIL ?? "";
-    // if (
-    //   !adminEmail ||
-    //   (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
-    // ) {
-    //   throw new ConvexError("Not an admin");
-    // }
+    // 🔐 Admin check (single-admin system)
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
 
     // 🔁 Slug uniqueness check
     const existing = await ctx.db
@@ -77,19 +77,17 @@ export const publishPost = mutation({
   },
   handler: async (ctx, { postId }) => {
     const identity = await authComponent.safeGetAuthUser(ctx);
-    console.log(identity);
     if (!identity) {
       throw new ConvexError("Unauthorized");
     }
 
-    // const adminEmail = process.env.ADMIN_EMAIL ?? "";
-    // if (
-    //   !identity ||
-    //   !adminEmail ||
-    //   (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
-    // ) {
-    //   throw new ConvexError("Unauthorized");
-    // }
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
 
     const post = await ctx.db.get(postId);
     if (!post) {
@@ -113,22 +111,26 @@ export const publishPost = mutation({
 });
 
 export const getAdminPosts = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 100 }) => {
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) {
       throw new ConvexError("Unauthorized");
     }
-    // const adminEmail = process.env.ADMIN_EMAIL ?? "";
-    // if (
-    //   !identity ||
-    //   !adminEmail ||
-    //   (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
-    // ) {
-    //   throw new ConvexError("Unauthorized");
-    // }
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
 
-    const posts = ctx.db.query("posts").order("desc").collect();
+    const posts = await ctx.db
+      .query("posts")
+      .order("desc")
+      .take(limit);
     return await Promise.all(
       (await posts).map(async (post) => {
         const resolvedImageUrl =
@@ -146,13 +148,15 @@ export const getAdminPosts = query({
 });
 
 export const getPublishedPosts = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 50 }) => {
     const posts = await ctx.db
       .query("posts")
       .withIndex("by_status", (q) => q.eq("status", "published"))
       .order("desc")
-      .collect();
+      .take(limit);
 
     return Promise.all(
       posts.map(async (post) => ({
@@ -171,6 +175,14 @@ export const archivePost = mutation({
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) {
       throw new ConvexError("Unauthorized");
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
     }
     await ctx.db.patch(postId, {
       status: "archived",
@@ -204,6 +216,14 @@ export const deleteImage = mutation({
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) throw new ConvexError("Unauthorized");
 
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
     try {
       await ctx.storage.delete(storageId);
     } catch (error) {
@@ -227,6 +247,19 @@ export const updatePost = mutation({
     imageStorageId: v.optional(v.id("_storage")),
   },
   handler: async (ctx, args) => {
+    const identity = await authComponent.safeGetAuthUser(ctx);
+    if (!identity) {
+      throw new ConvexError("Unauthorized");
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
     const { postId, ...data } = args;
     await ctx.db.patch(postId, {
       ...data,
@@ -242,6 +275,15 @@ export const generateImageUploadUrl = mutation({
     if (!identity) {
       throw new ConvexError("Unauthorized");
     }
+
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
     return await ctx.storage.generateUploadUrl();
   },
 });

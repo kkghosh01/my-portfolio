@@ -30,12 +30,15 @@ import { toast } from "sonner";
 import z from "zod";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 export default function CreateProjectPage() {
   const [isPending, startTransition] = useTransition();
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [imageError, setImageError] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [technologiesInput, setTechnologiesInput] = useState("");
+  const [featureInput, setFeatureInput] = useState("");
 
   const router = useRouter();
   const generateUploadUrl = useMutation(api.projects.generateUploadUrl);
@@ -100,7 +103,7 @@ export default function CreateProjectPage() {
   }
   function onSubmit(values: z.infer<typeof projectSchema>) {
     startTransition(async () => {
-      let storageIds: string[] = [];
+      let storageIds: Id<"_storage">[] = [];
 
       if (values.images?.length) {
         storageIds = await uploadImages(values.images, () =>
@@ -117,7 +120,7 @@ export default function CreateProjectPage() {
         githubUrl: values.githubUrl,
         technologies: values.technologies,
         features: values.features,
-        imageStorageIds: storageIds as any,
+        imageStorageIds: storageIds,
         seoTitle: values.seo?.metaTitle,
         seoDescription: values.seo?.metaDescription,
       });
@@ -280,83 +283,81 @@ export default function CreateProjectPage() {
               <Controller
                 name="technologies"
                 control={form.control}
-                render={({ field, fieldState }) => {
-                  const [inputValue, setInputValue] = useState(
-                    Array.isArray(field.value) ? field.value.join(", ") : "",
-                  );
-
-                  return (
-                    <Field>
-                      <FieldLabel>Technologies (comma-separated)</FieldLabel>
-                      <Input
-                        placeholder="React, Next.js, TypeScript"
-                        value={inputValue}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setInputValue(val);
-                          const arrayValues = val
-                            .split(",")
-                            .map((v) => v.trim())
-                            .filter(Boolean);
-                          field.onChange(arrayValues);
-                        }}
-                        onBlur={() => {
-                          const formatted = (
-                            Array.isArray(field.value) ? field.value : []
-                          ).join(", ");
-                          setInputValue(formatted);
-                          field.onBlur();
-                        }}
-                        aria-invalid={fieldState.invalid}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  );
-                }}
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Technologies (comma-separated)</FieldLabel>
+                    <Input
+                      placeholder="React, Next.js, TypeScript"
+                      value={
+                        technologiesInput ||
+                        (Array.isArray(field.value)
+                          ? field.value.join(", ")
+                          : "")
+                      }
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTechnologiesInput(val);
+                        const arrayValues = val
+                          .split(",")
+                          .map((v) => v.trim())
+                          .filter(Boolean);
+                        field.onChange(arrayValues);
+                      }}
+                      onBlur={() => {
+                        const formatted = (
+                          Array.isArray(field.value) ? field.value : []
+                        ).join(", ");
+                        setTechnologiesInput(formatted);
+                        field.onBlur();
+                      }}
+                      aria-invalid={fieldState.invalid}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
 
               <Controller
                 name="features"
                 control={form.control}
-                render={({ field, fieldState }) => {
-                  const [featureInput, setFeatureInput] = useState(
-                    Array.isArray(field.value) ? field.value.join(", ") : "",
-                  );
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <FieldLabel>Features (comma-separated)</FieldLabel>
+                    <Input
+                      {...field}
+                      value={
+                        featureInput ||
+                        (Array.isArray(field.value)
+                          ? field.value.join(", ")
+                          : "")
+                      }
+                      placeholder="Authentication, SEO, Dashboard"
+                      aria-invalid={fieldState.invalid}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setFeatureInput(val);
 
-                  return (
-                    <Field>
-                      <FieldLabel>Features (comma-separated)</FieldLabel>
-                      <Input
-                        {...field}
-                        value={featureInput}
-                        placeholder="Authentication, SEO, Dashboard"
-                        aria-invalid={fieldState.invalid}
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          setFeatureInput(val);
-
-                          const arrayValues = val
-                            .split(",")
-                            .map((v) => v.trim())
-                            .filter(Boolean);
-                          field.onChange(arrayValues);
-                        }}
-                        onBlur={() => {
-                          const formatted = (
-                            Array.isArray(field.value) ? field.value : []
-                          ).join(", ");
-                          setFeatureInput(formatted);
-                          field.onBlur();
-                        }}
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  );
-                }}
+                        const arrayValues = val
+                          .split(",")
+                          .map((v) => v.trim())
+                          .filter(Boolean);
+                        field.onChange(arrayValues);
+                      }}
+                      onBlur={() => {
+                        const formatted = (
+                          Array.isArray(field.value) ? field.value : []
+                        ).join(", ");
+                        setFeatureInput(formatted);
+                        field.onBlur();
+                      }}
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
               />
 
               <Controller

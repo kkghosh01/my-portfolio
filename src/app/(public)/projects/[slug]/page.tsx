@@ -1,7 +1,6 @@
 // app/projects/[slug]/page.tsx
 import { fetchQuery } from "convex/nextjs";
 import { notFound } from "next/navigation";
-import Image from "next/image";
 import { api } from "../../../../../convex/_generated/api";
 import { User, Calendar, ExternalLink, Github } from "lucide-react";
 import { ImageGallery } from "@/components/web/ImageGallery";
@@ -36,12 +35,8 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProjectDetailsPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
-  const { slug } = await params;
+export default async function ProjectDetailsPage({ params }: PageProps) {
+  const { slug } = params;
   const project = await fetchQuery(api.projects.getProjectBySlug, {
     slug,
   });

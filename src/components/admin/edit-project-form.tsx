@@ -65,7 +65,7 @@ export default function EditProjectForm({ project }: { project: Project }) {
         });
 
         toast.success("Project updated");
-      } catch (err) {
+      } catch {
         toast.error("Update failed");
       }
     });

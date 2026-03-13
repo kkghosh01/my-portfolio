@@ -15,7 +15,7 @@ export function Hero() {
         {/* LEFT CONTENT */}
         <div className="space-y-7 flex flex-col items-center text-center lg:items-start lg:text-left">
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold leading-tight tracking-tight">
-            I'm{" "}
+            I&apos;m{" "}
             <span className="bg-linear-to-r from-primary to-indigo-400 bg-clip-text text-transparent">
               Kishor
             </span>{" "}

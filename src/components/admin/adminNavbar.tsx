@@ -11,23 +11,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useEffect, useState } from "react";
 import { ThemeToggle } from "../web/theme-toggle";
 import { authClient } from "@/lib/auth-client";
 import { toast } from "sonner";
+import { NotificationBell } from "./notificationBell";
 
 interface AdminNavbarProps {
   onMenuClick: () => void;
 }
 
 export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   return (
     <header className="h-14 px-4 md:px-8 flex items-center justify-between border-b bg-background sticky top-0 z-40 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -48,7 +41,8 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
       </div>
 
       {/* Right side */}
-      <div className="flex items-center">
+      <div className="flex items-center gap-2">
+        <NotificationBell />
         <ThemeToggle />
         {/* Dropdown menu for user profile */}
         <DropdownMenu>

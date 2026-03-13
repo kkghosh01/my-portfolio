@@ -27,7 +27,7 @@ export default function Projects() {
 }
 
 async function LoadProjectsList() {
-  const data = await fetchQuery(api.projects.getPublishedProjects);
+  const data = await fetchQuery(api.projects.getPublishedProjects, {});
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {data?.map((project) => (

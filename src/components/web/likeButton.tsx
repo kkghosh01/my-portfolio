@@ -59,8 +59,6 @@ export function LikeButton({
         anonymousId: getAnonId(),
       });
 
-      console.log("Like toggle response:", res);
-
       // Handle the response - ensure it's not null
       if (res) {
         setLiked(res.liked);

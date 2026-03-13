@@ -12,7 +12,6 @@ import {
   FolderOpen,
   ChartBarStacked,
   ChevronLeft,
-  SquareM,
   MessageSquare,
 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
@@ -20,7 +19,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { DialogTitle } from "../ui/dialog";
-import { useEffect, useState } from "react";
 
 interface SidebarProps {
   collapsed?: boolean;
@@ -30,63 +28,78 @@ interface SidebarProps {
   onClose?: () => void;
 }
 
+interface SidebarItemProps {
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  label: string;
+  active: boolean;
+  collapsed?: boolean;
+}
+
+function SidebarItem({
+  href,
+  icon: Icon,
+  label,
+  active,
+  collapsed,
+}: SidebarItemProps) {
+  return (
+    <Link href={href}>
+      <CommandItem
+        className={cn(
+          "flex items-center gap-3 cursor-pointer transition-colors duration-150 ease-in-out",
+          "data-[selected=true]:bg-muted/70",
+          active && "bg-primary/10 text-primary font-medium",
+        )}
+      >
+        <Icon className="h-5 w-5 shrink-0" />
+        {!collapsed && <span>{label}</span>}
+      </CommandItem>
+    </Link>
+  );
+}
+
 function SidebarContent({ collapsed }: { collapsed?: boolean }) {
-  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
-  const Item = ({
-    href,
-    icon: Icon,
-    label,
-  }: {
-    href: string;
-    icon: any;
-    label: string;
-  }) => {
-    const active = pathname === href;
-
-    return (
-      <Link href={href}>
-        <CommandItem
-          className={cn(
-            "flex items-center gap-3 cursor-pointer transition-colors duration-150 ease-in-out",
-            "data-[selected=true]:bg-muted/70",
-            active && "bg-primary/10 text-primary font-medium",
-          )}
-        >
-          <Icon className="h-5 w-5 shrink-0" />
-          {!collapsed && <span>{label}</span>}
-        </CommandItem>
-      </Link>
-    );
-  };
 
   return (
     <Command className="h-full rounded-none bg-muted/40">
       <CommandList>
         <CommandGroup heading={!collapsed ? "Dashboard" : undefined}>
-          <Item href="/dashboard" icon={LayoutDashboard} label="Dashboard" />
-          <Item href="/dashboard/posts" icon={Newspaper} label="All Posts" />
-          <Item
+          <SidebarItem
+            href="/dashboard"
+            icon={LayoutDashboard}
+            label="Dashboard"
+            active={pathname === "/dashboard"}
+            collapsed={collapsed}
+          />
+          <SidebarItem
+            href="/dashboard/posts"
+            icon={Newspaper}
+            label="All Posts"
+            active={pathname === "/dashboard/posts"}
+            collapsed={collapsed}
+          />
+          <SidebarItem
             href="/dashboard/projects"
             icon={FolderOpen}
             label="All Projects"
+            active={pathname === "/dashboard/projects"}
+            collapsed={collapsed}
           />
-          <Item
+          <SidebarItem
             href="/dashboard/contacts"
             icon={MessageSquare}
             label="Contacts"
+            active={pathname === "/dashboard/contacts"}
+            collapsed={collapsed}
           />
-          <Item
+          <SidebarItem
             href="/dashboard/categories"
             icon={ChartBarStacked}
             label="Categories"
+            active={pathname === "/dashboard/categories"}
+            collapsed={collapsed}
           />
         </CommandGroup>
       </CommandList>

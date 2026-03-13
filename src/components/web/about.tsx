@@ -10,7 +10,7 @@ export function About() {
       {/* Section Header */}
       <div className="mb-14 text-center">
         <h2 className="text-3xl sm:text-5xl font-extrabold mb-4 bg-linear-to-r from-primary to-indigo-400 bg-clip-text text-transparent">
-          About Me
+          Overview
         </h2>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           A quick introduction to who I am and what I love building
@@ -25,7 +25,7 @@ export function About() {
           </h3>
 
           <p className="text-muted-foreground leading-relaxed">
-            I'm a passionate Frontend Developer focused on building clean,
+            I&apos;m a passionate Frontend Developer focused on building clean,
             responsive, and user-friendly web interfaces. I enjoy transforming
             complex problems into simple, elegant solutions using modern web
             technologies.
@@ -42,7 +42,7 @@ export function About() {
           </p>
 
           <p className="text-muted-foreground leading-relaxed">
-            Currently, I'm expanding toward full-stack development by learning{" "}
+            Currently, I&apos;m expanding toward full-stack development by learning{" "}
             <strong className="text-foreground">Node.js</strong> and databases,
             with a long-term goal of building scalable, real-world applications
             and integrating AI-powered features into web products.

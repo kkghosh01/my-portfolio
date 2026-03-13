@@ -7,12 +7,7 @@ import { redirect } from "next/navigation";
 import z from "zod";
 import { getToken } from "@/lib/auth-server";
 import { revalidatePath } from "next/cache";
-import { projectSchema } from "./schemas/projectSchema";
 import { Id } from "../../convex/_generated/dataModel";
-
-type ActionResult =
-  | { success: true }
-  | { success: false; message: string; field?: string };
 
 const MAX_FILE_SIZE = 1024 * 1024; // 1MB
 
@@ -77,7 +72,7 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
       },
       { token },
     );
-  } catch (err) {
+  } catch {
     return { error: "Failed to create post" };
   }
 
@@ -85,16 +80,12 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
   return redirect("/dashboard/posts");
 }
 
-export async function publishPostAction(postId: string) {
+export async function publishPostAction(postId: Id<"posts">) {
   try {
     const token = await getToken();
 
     // Call the Convex mutation
-    await fetchMutation(
-      api.posts.publishPost,
-      { postId: postId as any },
-      { token },
-    );
+    await fetchMutation(api.posts.publishPost, { postId }, { token });
 
     // Revalidate blog pages to show the newly published post
     revalidatePath("/blog");

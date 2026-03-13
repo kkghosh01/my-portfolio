@@ -4,6 +4,7 @@ import { StatsCard } from "@/components/web/statsCard";
 import { RecentProjects } from "@/components/web/project/recent-projects";
 import { RecentPosts } from "@/components/web/blog/recent-posts";
 import Link from "next/link";
+import Skills from "@/components/web/skills";
 
 export default async function Home() {
   return (
@@ -36,6 +37,9 @@ export default async function Home() {
         </div>
 
         <RecentPosts />
+      </section>
+      <section>
+        <Skills />
       </section>
     </>
   );

@@ -15,6 +15,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import z from "zod";
 import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTransition } from "react";
@@ -43,7 +44,7 @@ export default function LoginForm() {
           },
           onError: (error) => {
             toast.error(
-              error.error.message || "Login failed. Please try again."
+              error.error.message || "Login failed. Please try again.",
             );
           },
         },
@@ -97,6 +98,12 @@ export default function LoginForm() {
                 </Field>
               )}
             />
+            <Link
+              href="/auth/forgot-password"
+              className="text-sm text-muted-foreground hover:text-foreground transition-colors mt-2 inline-block"
+            >
+              Forgot password?
+            </Link>
             <Button disabled={isPending} type="submit" className="w-full mt-4">
               {isPending ? (
                 <>

@@ -11,55 +11,48 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
+function NavLink({
+  href,
+  children,
+  pathname,
+}: {
+  href: string;
+  children: React.ReactNode;
+  pathname: string;
+}) {
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      className={`${buttonVariants({
+        variant: isActive ? "navActive" : "nav",
+      })} relative px-4 py-2 font-medium`}
+    >
+      {isActive && (
+        <motion.span
+          className="pointer-events-none absolute inset-0 bg-primary/10 dark:bg-primary/20 rounded-md"
+          layoutId="nav-pill"
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 30,
+            mass: 1,
+          }}
+        />
+      )}
+      <span className="relative z-10">{children}</span>
+    </Link>
+  );
+}
+
 export function Navbar() {
-  // ✅ ALL hooks first
-  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // ✅ safe hydration guard
-  if (!mounted) return null;
-
-  function NavLink({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) {
-    const isActive = pathname === href;
-
-    return (
-      <Link
-        href={href}
-        className={`${buttonVariants({
-          variant: isActive ? "navActive" : "nav",
-        })} relative px-4 py-2 font-medium`}
-      >
-        {isActive && (
-          <motion.span
-            className="pointer-events-none absolute inset-0 bg-primary/10 dark:bg-primary/20 rounded-md"
-            layoutId="nav-pill"
-            transition={{
-              type: "spring",
-              stiffness: 500,
-              damping: 30,
-              mass: 1,
-            }}
-          />
-        )}
-        <span className="relative z-10">{children}</span>
-      </Link>
-    );
-  }
 
   return (
     <nav
@@ -73,11 +66,21 @@ export function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center lg:gap-2">
-          <NavLink href="/">Home</NavLink>
-          <NavLink href="/about">About</NavLink>
-          <NavLink href="/projects">Projects</NavLink>
-          <NavLink href="/blog">Blog</NavLink>
-          <NavLink href="/contact">Contact</NavLink>
+          <NavLink href="/" pathname={pathname}>
+            Home
+          </NavLink>
+          <NavLink href="/about" pathname={pathname}>
+            About
+          </NavLink>
+          <NavLink href="/projects" pathname={pathname}>
+            Projects
+          </NavLink>
+          <NavLink href="/blog" pathname={pathname}>
+            Blog
+          </NavLink>
+          <NavLink href="/contact" pathname={pathname}>
+            Contact
+          </NavLink>
         </div>
 
         <div className="hidden md:flex items-center gap-2 lg:gap-6">

@@ -26,12 +26,17 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 import { api } from "../../../convex/_generated/api";
+import type { Id } from "../../../convex/_generated/dataModel";
 
 const replySchema = z.object({
   message: z.string().min(5, "Reply must be at least 5 characters"),
 });
 
-export function ReplyDialog({ contact }: { contact: any }) {
+export function ReplyDialog({
+  contact,
+}: {
+  contact: { _id: Id<"contacts">; email: string; name: string };
+}) {
   const [open, setOpen] = useState(false);
   const sendReply = useMutation(api.contacts.replyToContact);
 
@@ -50,7 +55,7 @@ export function ReplyDialog({ contact }: { contact: any }) {
       toast.success("Reply sent successfully!");
       setOpen(false);
       form.reset();
-    } catch (error) {
+    } catch {
       toast.error("Failed to send reply");
     }
   }

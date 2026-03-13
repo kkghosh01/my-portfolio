@@ -2,9 +2,11 @@ import { createClient, type GenericCtx } from "@convex-dev/better-auth";
 import { convex } from "@convex-dev/better-auth/plugins";
 import { components } from "./_generated/api";
 import { DataModel } from "./_generated/dataModel";
-import { query } from "./_generated/server";
+import { query, mutation } from "./_generated/server";
 import { betterAuth } from "better-auth/minimal";
 import authConfig from "./auth.config";
+import { v } from "convex/values";
+import { Resend } from "@convex-dev/resend";
 
 const siteUrl = process.env.SITE_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "";
 
@@ -27,7 +29,7 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
           process.env.ADMIN_EMAIL ?? process.env.NEXT_PUBLIC_ADMIN_EMAIL;
         if (!adminEmail) {
           console.error(
-            "ADMIN_EMAIL not set in environment — blocking signups"
+            "ADMIN_EMAIL not set in environment — blocking signups",
           );
           return false;
         }
@@ -40,7 +42,7 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
           process.env.ADMIN_EMAIL ?? process.env.NEXT_PUBLIC_ADMIN_EMAIL;
         if (!adminEmail) {
           console.error(
-            "ADMIN_EMAIL not set in environment — blocking signins"
+            "ADMIN_EMAIL not set in environment — blocking signins",
           );
           return false;
         }
@@ -54,13 +56,9 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
   });
 };
 
-// Example function for getting the current user
-// Feel free to edit, omit, etc.
+// Export a public query to get the currently authenticated user
 export const getCurrentUser = query({
-  args: {},
   handler: async (ctx) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) return null; // 👈 instead of throw
-    return identity;
+    return await authComponent.safeGetAuthUser(ctx);
   },
 });

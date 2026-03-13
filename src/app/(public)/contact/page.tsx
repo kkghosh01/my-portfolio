@@ -25,11 +25,10 @@ export default function ContactPage() {
   function onSubmit(values: z.infer<typeof contactSchema>) {
     startTransition(async () => {
       try {
-        // Convex mutation call
         await createContact(values);
         toast.success("Message sent successfully!");
         form.reset();
-      } catch (error) {
+      } catch {
         toast.error("Something went wrong!");
       }
     });

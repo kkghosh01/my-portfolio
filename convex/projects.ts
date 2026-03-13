@@ -27,6 +27,14 @@ export const createProject = mutation({
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) throw new ConvexError("Unauthorized");
 
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
     const existing = await ctx.db
       .query("projects")
       .withIndex("by_slug", (q) => q.eq("slug", args.slug))
@@ -63,8 +71,22 @@ export const createProject = mutation({
   },
 });
 
-export const generateUploadUrl = mutation(async (ctx) => {
-  return await ctx.storage.generateUploadUrl();
+export const generateUploadUrl = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await authComponent.safeGetAuthUser(ctx);
+    if (!identity) throw new ConvexError("Unauthorized");
+
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
+    return await ctx.storage.generateUploadUrl();
+  },
 });
 
 export const publishProject = mutation({
@@ -106,14 +128,27 @@ export const publishProject = mutation({
 });
 
 export const getAdminProjects = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 100 }) => {
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) {
       throw new ConvexError("Unauthorized");
     }
 
-    const projects = await ctx.db.query("projects").order("desc").collect();
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
+    const projects = await ctx.db
+      .query("projects")
+      .order("desc")
+      .take(limit);
 
     return await Promise.all(
       projects.map(async (project) => {
@@ -138,13 +173,15 @@ export const getAdminProjects = query({
 });
 
 export const getPublishedProjects = query({
-  args: {},
-  handler: async (ctx) => {
+  args: {
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, { limit = 50 }) => {
     const projects = await ctx.db
       .query("projects")
       .withIndex("by_status", (q) => q.eq("status", "published"))
       .order("desc")
-      .collect();
+      .take(limit);
 
     return await Promise.all(
       projects.map(async (project) => {
@@ -217,6 +254,14 @@ export const archiveProject = mutation({
     const identity = await authComponent.safeGetAuthUser(ctx);
     if (!identity) throw new ConvexError("Unauthorized");
 
+    const adminEmail = process.env.ADMIN_EMAIL ?? "";
+    if (
+      !adminEmail ||
+      (identity.email ?? "").toLowerCase() !== adminEmail.toLowerCase()
+    ) {
+      throw new ConvexError("Not an admin");
+    }
+
     const project = await ctx.db.get(projectId);
     if (!project) throw new ConvexError("Project not found");
 
@@ -240,6 +285,10 @@ export const deleteImage = mutation({
 
     const project = await ctx.db.get(projectId);
     if (!project) throw new ConvexError("Project not found");
+
+    if (project.authorId !== identity._id) {
+      throw new ConvexError("Forbidden");
+    }
 
     const updatedImages =
       project.imageStorageIds?.filter((id) => id !== storageId) ?? [];

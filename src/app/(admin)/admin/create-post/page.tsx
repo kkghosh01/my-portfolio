@@ -28,13 +28,15 @@ import {
 import { ImageIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
+type PostFormValues = z.infer<typeof postSchema>;
+
 export default function CreatePostPage() {
   const [isPending, startTransition] = useTransition();
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
 
-  const form = useForm({
+  const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
     defaultValues: {
       title: "",
@@ -62,7 +64,10 @@ export default function CreatePostPage() {
 
     if (!file) {
       setImagePreview(null);
-      form.setValue("coverImage", undefined as any);
+      form.setValue(
+        "coverImage",
+        undefined as unknown as PostFormValues["coverImage"],
+      );
       return;
     }
 
@@ -88,7 +93,10 @@ export default function CreatePostPage() {
 
       e.target.value = "";
       setImagePreview(null);
-      form.setValue("coverImage", undefined as any);
+      form.setValue(
+        "coverImage",
+        undefined as unknown as PostFormValues["coverImage"],
+      );
       return;
     }
 
@@ -102,7 +110,10 @@ export default function CreatePostPage() {
 
       e.target.value = "";
       setImagePreview(null);
-      form.setValue("coverImage", undefined as any);
+      form.setValue(
+        "coverImage",
+        undefined as unknown as PostFormValues["coverImage"],
+      );
       return;
     }
 

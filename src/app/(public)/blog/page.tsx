@@ -28,7 +28,7 @@ export default function Blog() {
 }
 
 async function LoadBlogList() {
-  const data = await fetchQuery(api.posts.getPublishedPosts);
+  const data = await fetchQuery(api.posts.getPublishedPosts, {});
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {data?.map((post) => (
