@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { Button, buttonVariants } from "../ui/button";
-import { ArrowUpRight, Download, Menu } from "lucide-react";
+import { ArrowUpRight, Eye, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -11,7 +11,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 
@@ -51,20 +51,26 @@ function NavLink({
 }
 
 export function Navbar() {
+  const [mounted, setMounted] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="h-16 border-b border-border" />;
+  }
+
   return (
-    <nav
-      className="sticky top-0 z-50 backdrop-blur bg-background/70"
-      suppressHydrationWarning
-    >
+    <nav className="sticky top-0 z-50 bg-background border-b border-border">
       <div className="max-w-7xl mx-auto w-full px-4 md:px-6 lg:px-8 flex items-center justify-between h-16">
         <Link href="/" className="text-3xl font-bold tracking-tighter">
           Kishor&apos;s<span className="text-primary">Code</span>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop */}
         <div className="hidden md:flex items-center lg:gap-2">
           <NavLink href="/" pathname={pathname}>
             Home
@@ -91,18 +97,23 @@ export function Navbar() {
             Hire me
             <ArrowUpRight className="ml-2 h-4 w-4" />
           </Link>
-          <Link href="/cv" className={buttonVariants({ variant: "outline" })}>
-            <Download className="ml-2 h-4 w-4" />
-            Download CV
+
+          <Link
+            href="/resume"
+            className={buttonVariants({ variant: "outline" })}
+          >
+            <Eye className="ml-2 h-4 w-4" />
+            View Resume
           </Link>
+
           <ThemeToggle />
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile */}
         <div className="md:hidden flex items-center gap-2">
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" aria-label="Open menu">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
               </Button>
             </SheetTrigger>
@@ -110,9 +121,7 @@ export function Navbar() {
             <SheetContent side="right">
               <div className="sr-only">
                 <SheetTitle>Mobile navigation</SheetTitle>
-                <SheetDescription>
-                  Navigation menu for mobile devices
-                </SheetDescription>
+                <SheetDescription>Navigation menu</SheetDescription>
               </div>
 
               <div className="flex flex-col gap-4 mt-8">
@@ -132,23 +141,29 @@ export function Navbar() {
                     {label}
                   </Link>
                 ))}
+              </div>
 
+              {/* Mobile CTAs */}
+              <div className="mt-auto flex flex-col gap-3 pb-20">
                 <Link
                   href="/contact"
-                  className={buttonVariants({ variant: "default" })}
+                  className={buttonVariants({
+                    variant: "default",
+                    className: "w-full",
+                  })}
                   onClick={() => setIsOpen(false)}
                 >
-                  Hire me
-                  <ArrowUpRight className="mr-2 h-4 w-4" />
+                  Hire me <ArrowUpRight className="ml-2 h-4 w-4" />
                 </Link>
-
                 <Link
-                  href="/cv"
-                  className={buttonVariants({ variant: "outline" })}
+                  href="/resume"
+                  className={buttonVariants({
+                    variant: "outline",
+                    className: "w-full",
+                  })}
                   onClick={() => setIsOpen(false)}
                 >
-                  <Download className="mr-2 h-4 w-4" />
-                  Download CV
+                  <Eye className="mr-2 h-4 w-4" /> View Resume
                 </Link>
               </div>
             </SheetContent>

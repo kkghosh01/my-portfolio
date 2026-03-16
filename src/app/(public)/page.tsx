@@ -15,7 +15,7 @@ export default async function Home() {
       </div>
       <About />
       <section>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="mb-6 mt-16 text-4xl font-bold">Recent Projects</h2>
           <Link
             href="/projects"
@@ -29,7 +29,7 @@ export default async function Home() {
       </section>
 
       <section className="mt-16">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <h2 className="mb-6 text-4xl font-bold">Latest Blog Posts</h2>
           <Link href="/blog" className="text-sm text-primary hover:underline">
             View All Posts

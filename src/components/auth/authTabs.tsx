@@ -6,7 +6,7 @@ export default function AuthTabs() {
   return (
     <Tabs
       defaultValue="login"
-      className="w-125 p-6 rounded-lg shadow-lg border"
+      className="w-full max-w-sm sm:w-125 p-6 rounded-lg shadow-lg border"
     >
       <TabsList className="mb-4 grid w-full grid-cols-2">
         <TabsTrigger value="login">Login</TabsTrigger>

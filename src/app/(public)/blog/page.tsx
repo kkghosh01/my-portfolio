@@ -6,6 +6,7 @@ import { fetchQuery } from "convex/nextjs";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, User } from "lucide-react";
+import { SearchInput } from "@/components/web/blog/SearchInput";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +21,11 @@ export default function Blog() {
           Insights, thoughts, and ideas!
         </p>
       </div>
+
+      <div className="mx-auto mb-10 w-full max-w-md">
+        <SearchInput />
+      </div>
+
       <Suspense fallback={<SkeletonLoadngUi />}>
         <LoadBlogList />
       </Suspense>

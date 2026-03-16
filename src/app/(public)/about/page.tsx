@@ -41,9 +41,9 @@ export default function AboutPage() {
           initial={{ opacity: 0, x: -40 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.6 }}
-          className="flex justify-start"
+          className="flex justify-center md:justify-start"
         >
-          <div className="relative w-[340px] h-[380px] rounded-3xl overflow-hidden border border-border shadow-md group">
+          <div className="relative w-full max-w-xs sm:max-w-sm aspect-[340/380] rounded-3xl overflow-hidden border border-border shadow-md group">
             <Image
               src="/Kishor.jpg"
               alt="Kishor Kumar"

@@ -10,11 +10,20 @@ import { Id } from "../../../convex/_generated/dataModel";
 /* ---------- anonymous id ---------- */
 const ANON_KEY = "portfolio_anon_id";
 
+function generateId() {
+  // modern browser
+  if (typeof crypto !== "undefined" && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // fallback for old mobile / webview / samsung browser
+  return Math.random().toString(36).slice(2) + Date.now().toString(36);
+}
+
 function getAnonId() {
   if (typeof window === "undefined") return "";
   let id = localStorage.getItem(ANON_KEY);
   if (!id) {
-    id = crypto.randomUUID();
+    id = generateId();
     localStorage.setItem(ANON_KEY, id);
   }
   return id;
@@ -66,7 +75,6 @@ export function LikeButton({
         localStorage.setItem(`liked:${postId}`, res.liked ? "1" : "0");
       } else {
         // If response is null, use optimistic values
-        console.warn("Response was null, using optimistic values");
         localStorage.setItem(`liked:${postId}`, newLiked ? "1" : "0");
       }
     } catch (error) {

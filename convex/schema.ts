@@ -41,7 +41,13 @@ export default defineSchema({
     // author posts
     .index("by_author", ["authorId"])
     // published feed
-    .index("by_status", ["status"]),
+    .index("by_status", ["status"])
+    .searchIndex("search_title", {
+      searchField: "title",
+    })
+    .searchIndex("search_content", {
+      searchField: "content",
+    }),
 
   likes: defineTable({
     userId: v.string(),

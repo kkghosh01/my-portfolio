@@ -30,6 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${interSans.variable} ${geistMono.variable} antialiased`}
       >
         <ThemeProvider
@@ -37,6 +38,7 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
+          storageKey="theme"
         >
           <ConvexClientProvider>
             {children}

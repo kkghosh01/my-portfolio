@@ -35,8 +35,13 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProjectDetailsPage({ params }: PageProps) {
-  const { slug } = params;
+export default async function ProjectDetailsPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
   const project = await fetchQuery(api.projects.getProjectBySlug, {
     slug,
   });
