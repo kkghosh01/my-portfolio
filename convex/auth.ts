@@ -22,6 +22,13 @@ export const createAuth = (ctx: GenericCtx<DataModel>) => {
   return betterAuth({
     baseURL: siteUrl,
     database: authComponent.adapter(ctx),
+    advanced: {
+      useSecureCookies: true,
+    },
+    trustedOrigins: [
+      "https://my-portfolio-cjjsicfel-kishor-kumar-ghoshs-projects.vercel.app",
+      "https://*.vercel.app",
+    ],
     // Configure simple, non-verified email/password to get started
     emailAndPassword: {
       enabled: true,
