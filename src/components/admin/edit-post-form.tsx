@@ -1,6 +1,10 @@
 "use client";
 
 import { useForm } from "react-hook-form";
+import dynamic from "next/dynamic";
+const RichEditor = dynamic(() => import("@/components/editor/RichEditor"), {
+  ssr: false,
+});
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { postSchema } from "@/app/schemas/blog";
@@ -19,7 +23,6 @@ import {
   FormControl,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 
 const postFormSchema = postSchema.partial({ coverImage: true });
@@ -50,6 +53,9 @@ export default function EditPostForm({
 
   const [preview, setPreview] = useState<string | null>(imageUrl ?? null);
   const [newImage, setNewImage] = useState<File | null>(null);
+
+  const [tagsInput, setTagsInput] = useState(post.tags?.join(", ") ?? "");
+  const [categoryInput, setCategoryInput] = useState(post.category ?? "");
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postFormSchema),
@@ -156,14 +162,14 @@ export default function EditPostForm({
         </div>
 
         {/* -------- TEXT FIELDS -------- */}
-        {(["title", "slug", "category"] as const).map((name) => (
+        {(["title", "slug"] as const).map((name) => (
           <FormField
             key={name}
             name={name}
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>{name}</FormLabel>
+                <FormLabel className="capitalize">{name}</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -173,12 +179,58 @@ export default function EditPostForm({
         ))}
 
         <FormField
+          name="category"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Input
+                  value={categoryInput}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setCategoryInput(val);
+                    field.onChange(val);
+                  }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          name="tags"
+          control={form.control}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tags (comma-separated)</FormLabel>
+              <FormControl>
+                <Input
+                  value={tagsInput}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setTagsInput(val);
+                    const arrayValues = val
+                      .split(",")
+                      .map((t) => t.trim())
+                      .filter(Boolean);
+                    field.onChange(arrayValues);
+                  }}
+                />
+              </FormControl>
+            </FormItem>
+          )}
+        />
+
+        <FormField
           name="content"
           control={form.control}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Content</FormLabel>
-              <Textarea rows={10} {...field} />
+              <FormControl>
+                <RichEditor value={field.value} onChange={field.onChange} />
+              </FormControl>
             </FormItem>
           )}
         />

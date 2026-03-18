@@ -28,6 +28,24 @@ export default function Projects() {
 
 async function LoadProjectsList() {
   const data = await fetchQuery(api.projects.getPublishedProjects, {});
+
+  // Helper to strip HTML tags for the preview
+  const stripHtml = (html: string) => {
+    if (!html) return "";
+    const doc = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+    const clean = doc.replace(/<[^>]*>?/gm, " ");
+    return clean
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   return (
     <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {data?.map((project) => (
@@ -86,7 +104,7 @@ async function LoadProjectsList() {
 
               {/* Excerpt */}
               <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed line-clamp-3 mb-6">
-                {project.projectDetails}
+                {stripHtml(project.projectDetails)}
               </p>
             </CardContent>
 

@@ -90,7 +90,8 @@ async function LoadBlogList() {
 
               {/* Excerpt */}
               <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed line-clamp-3 mb-6">
-                {post.content}
+                {post.excerpt ||
+                  "No excerpt available. Click to read the full article."}
               </p>
             </CardContent>
 

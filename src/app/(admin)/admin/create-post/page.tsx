@@ -1,5 +1,9 @@
 "use client";
+import dynamic from "next/dynamic";
 
+const RichEditor = dynamic(() => import("@/components/editor/RichEditor"), {
+  ssr: false,
+});
 import { postSchema } from "@/app/schemas/blog";
 import {
   Card,
@@ -35,6 +39,8 @@ export default function CreatePostPage() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | null>(null);
   const [slugTouched, setSlugTouched] = useState(false);
+  const [tagsInput, setTagsInput] = useState("");
+  const [categoryInput, setCategoryInput] = useState("");
 
   const form = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
@@ -207,12 +213,12 @@ export default function CreatePostPage() {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel>Content *</FieldLabel>
-                    <Textarea
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Write your blog post here..."
-                      rows={10}
-                      {...field}
+
+                    <RichEditor
+                      value={field.value}
+                      onChange={(val) => field.onChange(val)}
                     />
+
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
@@ -246,16 +252,17 @@ export default function CreatePostPage() {
                     <Input
                       aria-invalid={fieldState.invalid}
                       placeholder="e.g. technology, programming"
-                      {...field}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value
-                            .toLowerCase()
-                            .split(",")
-                            .map((t) => t.trim())
-                            .filter(Boolean)
-                        )
-                      }
+                      value={tagsInput}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setTagsInput(val);
+                        // Split by comma and update form state
+                        const arrayValues = val
+                          .split(",")
+                          .map((t) => t.trim())
+                          .filter(Boolean);
+                        field.onChange(arrayValues);
+                      }}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
@@ -272,7 +279,12 @@ export default function CreatePostPage() {
                     <Input
                       aria-invalid={fieldState.invalid}
                       placeholder="e.g. technology, programming"
-                      {...field}
+                      value={categoryInput}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setCategoryInput(val);
+                        field.onChange(val);
+                      }}
                     />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />

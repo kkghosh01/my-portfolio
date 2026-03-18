@@ -16,6 +16,25 @@ export default function ProjectCard({ project }: ProjectCardProps) {
     project.imageUrls?.[0] ||
     "https://images.unsplash.com/photo-1498050108023-c5249f4df085";
 
+  // Helper to strip HTML tags for the preview
+  const stripHtml = (html: string) => {
+    if (!html) return "";
+    // 1. Remove script and style tags and their content
+    const doc = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+                    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+    // 2. Remove all other HTML tags
+    const clean = doc.replace(/<[^>]*>?/gm, " ");
+    // 3. Decode common entities and normalize whitespace
+    return clean
+      .replace(/&nbsp;/g, " ")
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/\s+/g, " ")
+      .trim();
+  };
+
   return (
     <article className="group">
       <Link href={`/projects/${project.slug}`}>
@@ -33,7 +52,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
         </h3>
 
         <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-          {project.projectDetails}
+          {stripHtml(project.projectDetails)}
         </p>
       </Link>
     </article>

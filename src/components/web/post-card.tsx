@@ -7,6 +7,7 @@ type PostCardProps = {
     title: string;
     slug: string;
     content: string;
+    excerpt?: string | null;
     imageUrl: string | null;
   };
 };
@@ -34,7 +35,7 @@ export function PostCard({ post }: PostCardProps) {
 
         {post.content && (
           <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-            {post.content}
+            {post.excerpt || "No excerpt available. Click to read more."}
           </p>
         )}
       </Link>

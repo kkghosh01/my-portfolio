@@ -134,21 +134,9 @@ export default async function BlogDetails({ params }: PageProps) {
       )}
 
       <div
-        className="prose prose-lg dark:prose-invert max-w-none 
-    prose-headings:font-semibold
-    prose-h2:text-2xl prose-h2:mt-12 prose-h2:mb-6
-    prose-h3:text-xl prose-h3:mt-10 prose-h3:mb-4
-    prose-p:leading-relaxed prose-p:text-gray-700 dark:prose-p:text-gray-300
-    prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
-    prose-blockquote:border-l-4 prose-blockquote:border-gray-300 dark:prose-blockquote:border-gray-600
-    prose-blockquote:pl-4 prose-blockquote:italic
-    prose-ul:my-6 prose-ol:my-6
-    prose-li:my-2
-    prose-hr:my-12 prose-hr:border-gray-200 dark:prose-hr:border-gray-700
-    mb-12"
-      >
-        {post.content}
-      </div>
+        className="prose prose-lg dark:prose-invert max-w-none"
+        dangerouslySetInnerHTML={{ __html: post.content }}
+      />
 
       <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
         <LikeButton postId={post._id} initialLikes={post.likes ?? 0} />

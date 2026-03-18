@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AdminNavbar from "@/components/admin/adminNavbar";
 import Sidebar from "@/components/admin/sidebar";
 
@@ -11,6 +11,23 @@ export default function AdminShell({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <div className="flex min-h-screen animate-pulse bg-muted/20">
+        <div className="w-64 border-r hidden md:block" />
+        <div className="flex-1">
+          <div className="h-14 border-b" />
+          <div className="p-6" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

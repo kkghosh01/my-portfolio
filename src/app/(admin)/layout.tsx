@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { fetchAuthQuery } from "@/lib/auth-server";
-
-import AdminShell from "./AdminShell";
 import { api } from "../../../convex/_generated/api";
+
+import AdminClientShell from "./AdminClientShell";
 
 export default async function AdminLayout({
   children,
@@ -21,6 +21,5 @@ export default async function AdminLayout({
     redirect("/auth");
   }
 
-  // user verified, now render client shell
-  return <AdminShell>{children}</AdminShell>;
+  return <AdminClientShell>{children}</AdminClientShell>;
 }

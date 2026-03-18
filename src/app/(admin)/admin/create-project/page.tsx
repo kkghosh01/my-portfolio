@@ -1,5 +1,9 @@
 "use client";
 
+import dynamic from "next/dynamic";
+const RichEditor = dynamic(() => import("@/components/editor/RichEditor"), {
+  ssr: false,
+});
 import { createProjectAction } from "@/app/actions";
 import { projectSchema } from "@/app/schemas/projectSchema";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -18,7 +22,6 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { uploadImages } from "@/lib/upload-images";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -208,12 +211,7 @@ export default function CreateProjectPage() {
                 render={({ field, fieldState }) => (
                   <Field>
                     <FieldLabel>Content *</FieldLabel>
-                    <Textarea
-                      aria-invalid={fieldState.invalid}
-                      placeholder="Write your blog post here..."
-                      rows={10}
-                      {...field}
-                    />
+                    <RichEditor value={field.value} onChange={field.onChange} />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}

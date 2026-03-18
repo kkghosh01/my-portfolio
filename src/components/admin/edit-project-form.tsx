@@ -1,6 +1,10 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import dynamic from "next/dynamic";
+const RichEditor = dynamic(() => import("@/components/editor/RichEditor"), {
+  ssr: false,
+});
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { uploadImages } from "@/lib/upload-images";
@@ -74,11 +78,10 @@ export default function EditProjectForm({ project }: { project: Project }) {
   return (
     <div className="space-y-4 max-w-3xl">
       <Input value={title} onChange={(e) => setTitle(e.target.value)} />
-      <Textarea
-        rows={8}
-        value={details}
-        onChange={(e) => setDetails(e.target.value)}
-      />
+      <div className="space-y-1">
+        <label className="text-sm font-medium">Project Details</label>
+        <RichEditor value={details} onChange={(val) => setDetails(val)} />
+      </div>
       <Input value={category} onChange={(e) => setCategory(e.target.value)} />
       <Input value={liveUrl} onChange={(e) => setLiveUrl(e.target.value)} />
 
