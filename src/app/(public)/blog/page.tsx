@@ -7,8 +7,14 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Calendar, User } from "lucide-react";
 import { SearchInput } from "@/components/web/blog/SearchInput";
+import { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Blog",
+  description: "Read latest blogs about Web Development, React, Next.js",
+};
 
 export default function Blog() {
   return (
@@ -45,13 +51,13 @@ async function LoadBlogList() {
               <Image
                 src={
                   post.imageUrl ||
-                  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1172&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                  "https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1172&auto=format&fit=crop"
                 }
                 alt={post.title}
                 fill
+                loading="eager"
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                priority={false}
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent" />
             </div>

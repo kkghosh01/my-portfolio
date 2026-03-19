@@ -39,7 +39,7 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
               src={img}
               alt={`${title} - Image ${index + 1}`}
               fill
-              loading={index === 0 ? "eager" : "lazy"}
+              priority={index === 0}
               className="object-cover group-hover:scale-105 transition-transform duration-300"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
             />

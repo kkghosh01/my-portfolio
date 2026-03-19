@@ -6,6 +6,12 @@ import Image from "next/image";
 import { Calendar, User } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import Link from "next/link";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Projects",
+  description: "Projects built by Kishor Kumar Ghosh",
+};
 
 export default function Projects() {
   return (
@@ -62,7 +68,7 @@ async function LoadProjectsList() {
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 className="object-cover transition-transform duration-500 group-hover:scale-110"
-                priority={false}
+                loading="eager"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent" />
             </div>

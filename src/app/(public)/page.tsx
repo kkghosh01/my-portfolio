@@ -5,6 +5,12 @@ import { RecentProjects } from "@/components/web/project/recent-projects";
 import { RecentPosts } from "@/components/web/blog/recent-posts";
 import Link from "next/link";
 import Skills from "@/components/web/skills";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home",
+  description: "Welcome to Kishor Kumar Ghosh portfolio website",
+};
 
 export default async function Home() {
   return (

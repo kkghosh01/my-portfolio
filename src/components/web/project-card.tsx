@@ -20,8 +20,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
   const stripHtml = (html: string) => {
     if (!html) return "";
     // 1. Remove script and style tags and their content
-    const doc = html.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
-                    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
+    const doc = html
+      .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, "")
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, "");
     // 2. Remove all other HTML tags
     const clean = doc.replace(/<[^>]*>?/gm, " ");
     // 3. Decode common entities and normalize whitespace
@@ -43,6 +44,9 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             src={image}
             alt={project.title}
             fill
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            loading="eager"
+            quality={75}
             className="object-cover transition-transform group-hover:scale-105"
           />
         </div>

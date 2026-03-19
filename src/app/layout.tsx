@@ -17,11 +17,53 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Kishor's Code | Kishor Kumar Ghosh Portfolio",
-  description:
-    "Portfolio of Kishor Kumar Ghosh - Full Stack Developer, Open Source Enthusiast, and Tech Blogger.",
-};
+  metadataBase: new URL("https://my-portfolio-tau-six-33xhna7rpv.vercel.app"),
 
+  title: {
+    default: "Kishor's Code | Kishor Kumar Ghosh",
+    template: "%s | Kishor's Code",
+  },
+
+  description:
+    "Kishor Kumar Ghosh Portfolio - Full Stack Developer, React, Next.js, Node.js, SEO friendly portfolio",
+
+  keywords: [
+    "Kishor Kumar Ghosh",
+    "Full Stack Developer",
+    "Next.js Developer",
+    "React Developer",
+    "Bangladesh Developer",
+    "Web Developer Portfolio",
+  ],
+
+  openGraph: {
+    title: "Kishor's Code",
+    description: "Full Stack Developer Portfolio",
+    url: "https://my-portfolio-tau-six-33xhna7rpv.vercel.app",
+    siteName: "Kishor's Code",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Kishor's Code",
+    description: "Full Stack Developer Portfolio",
+    images: ["/og.png"],
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 export default function RootLayout({
   children,
 }: Readonly<{

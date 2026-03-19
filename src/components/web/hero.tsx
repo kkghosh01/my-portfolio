@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -46,16 +47,16 @@ export function Hero() {
           </p>
 
           <Button
+            asChild
             className={buttonVariants({
               size: "lg",
               className: "group inline-flex items-center gap-2 rounded-xl",
             })}
           >
-            Hire Me
-            <ArrowUpRight
-              size={18}
-              className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
+            <Link href="/contact">
+              Hire Me
+              <ArrowUpRight size={18} />
+            </Link>
           </Button>
         </div>
 
@@ -67,11 +68,13 @@ export function Hero() {
           {/* image card */}
           <div className="relative w-72 h-96 overflow-hidden rounded-2xl border border-white/10 backdrop-blur transition-transform duration-500 ease-out lg:rotate-6 group-hover:rotate-0 group-hover:scale-105">
             <Image
-              src="/Kishor.jpg"
+              src="/Kishor.webp"
               alt="Kishor Kumar Ghosh"
               fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover"
               priority
+              quality={75}
             />
           </div>
         </div>
