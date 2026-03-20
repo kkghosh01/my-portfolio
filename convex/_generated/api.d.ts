@@ -10,9 +10,11 @@
 
 import type * as auth from "../auth.js";
 import type * as contacts from "../contacts.js";
+import type * as dashboard from "../dashboard.js";
 import type * as http from "../http.js";
 import type * as posts from "../posts.js";
 import type * as projects from "../projects.js";
+import type * as settings from "../settings.js";
 
 import type {
   ApiFromModules,
@@ -23,9 +25,11 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   contacts: typeof contacts;
+  dashboard: typeof dashboard;
   http: typeof http;
   posts: typeof posts;
   projects: typeof projects;
+  settings: typeof settings;
 }>;
 
 /**

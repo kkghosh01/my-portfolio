@@ -110,4 +110,22 @@ export default defineSchema({
     .index("by_created", ["createdAt"])
     .index("by_status", ["status"])
     .index("by_email", ["email"]),
+
+  settings: defineTable({
+    siteName: v.string(),
+    siteDescription: v.string(),
+    siteLogo: v.optional(v.id("_storage")),
+    socialLinks: v.array(
+      v.object({
+        platform: v.string(),
+        url: v.string(),
+      }),
+    ),
+    seo: v.object({
+      title: v.string(),
+      description: v.string(),
+      keywords: v.array(v.string()),
+    }),
+    updatedAt: v.number(),
+  }),
 });

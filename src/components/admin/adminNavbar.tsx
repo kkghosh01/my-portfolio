@@ -21,7 +21,6 @@ interface AdminNavbarProps {
 }
 
 export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
-
   return (
     <header className="h-14 px-4 md:px-8 flex items-center justify-between border-b bg-background sticky top-0 z-40 backdrop-blur supports-backdrop-filter:bg-background/80">
       {/* Left side */}
@@ -57,7 +56,7 @@ export default function AdminNavbar({ onMenuClick }: AdminNavbarProps) {
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <Link href="/admin/profile" className="flex items-center gap-2">
+              <Link href="/admin" className="flex items-center gap-2">
                 <User className="h-4 w-4" />
                 Profile
               </Link>

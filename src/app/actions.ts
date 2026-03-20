@@ -1,11 +1,10 @@
 "use server";
 
 import { postSchema } from "./schemas/blog";
-import { fetchMutation } from "convex/nextjs";
+import { fetchAuthMutation } from "@/lib/auth-server";
 import { api } from "../../convex/_generated/api";
 import { redirect } from "next/navigation";
 import z from "zod";
-import { getToken } from "@/lib/auth-server";
 import { revalidatePath } from "next/cache";
 import { Id } from "../../convex/_generated/dataModel";
 
@@ -37,12 +36,9 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
 
     /* ----------------------------------------------------------- */
 
-    const token = await getToken();
-
-    const uploadUrl = await fetchMutation(
+    const uploadUrl = await fetchAuthMutation(
       api.posts.generateImageUploadUrl,
       {},
-      { token },
     );
 
     const uploadResult = await fetch(uploadUrl, {
@@ -59,19 +55,15 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
 
     const { storageId } = await uploadResult.json();
 
-    await fetchMutation(
-      api.posts.createPost,
-      {
-        title: parsed.data.title,
-        slug: parsed.data.slug,
-        content: parsed.data.content,
-        excerpt: parsed.data.excerpt,
-        tags: parsed.data.tags,
-        category: parsed.data.category,
-        imageStorageId: storageId,
-      },
-      { token },
-    );
+    await fetchAuthMutation(api.posts.createPost, {
+      title: parsed.data.title,
+      slug: parsed.data.slug,
+      content: parsed.data.content,
+      excerpt: parsed.data.excerpt,
+      tags: parsed.data.tags,
+      category: parsed.data.category,
+      imageStorageId: storageId,
+    });
   } catch {
     return { error: "Failed to create post" };
   }
@@ -82,10 +74,8 @@ export async function createBlogAction(values: z.infer<typeof postSchema>) {
 
 export async function publishPostAction(postId: Id<"posts">) {
   try {
-    const token = await getToken();
-
     // Call the Convex mutation
-    await fetchMutation(api.posts.publishPost, { postId }, { token });
+    await fetchAuthMutation(api.posts.publishPost, { postId });
 
     // Revalidate blog pages to show the newly published post
     revalidatePath("/blog");
@@ -114,9 +104,7 @@ export async function createProjectAction(data: {
   seoDescription?: string;
 }) {
   try {
-    const token = await getToken();
-
-    await fetchMutation(api.projects.createProject, data, { token });
+    await fetchAuthMutation(api.projects.createProject, data);
 
     revalidatePath("/dashboard/projects");
 
@@ -130,13 +118,9 @@ export async function createProjectAction(data: {
 
 export async function publishProjectAction(projectId: Id<"projects">) {
   try {
-    const token = await getToken();
-
-    const res = await fetchMutation(
-      api.projects.publishProject,
-      { projectId },
-      { token },
-    );
+    const res = await fetchAuthMutation(api.projects.publishProject, {
+      projectId,
+    });
 
     revalidatePath("/dashboard/projects");
     revalidatePath("/projects");
