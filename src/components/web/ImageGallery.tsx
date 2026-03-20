@@ -1,4 +1,3 @@
-// components/ImageGallery.tsx
 "use client";
 
 import { useState } from "react";
@@ -16,35 +15,32 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
 
   if (images.length === 0) return null;
 
-  const closeModal = () => {
-    setSelectedIndex(null);
-  };
-
   return (
     <>
-      {/* Mobile: single column, Tablet: 2 columns, Desktop: 3 columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Gallery */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 lg:h-[420px]">
         {images.map((img, index) => (
           <button
             key={index}
             onClick={() => setSelectedIndex(index)}
-            className={`relative rounded-xl overflow-hidden group cursor-zoom-in ${
-              index === 0
-                ? "md:col-span-2 lg:col-span-1 aspect-video md:aspect-auto"
-                : "aspect-square"
-            }`}
-            aria-label={`View image ${index + 1}`}
+            className={`relative rounded-xl overflow-hidden group cursor-zoom-in
+
+            ${index === 0 ? "lg:row-span-2 h-[260px] lg:h-full" : "h-[260px]"}
+
+            `}
           >
             <Image
               src={img}
-              alt={`${title} - Image ${index + 1}`}
+              alt={`${title} ${index}`}
               fill
               priority={index === 0}
-              className="object-cover group-hover:scale-105 transition-transform duration-300"
-              sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+              className="object-cover object-top group-hover:scale-105 transition-transform duration-300"
             />
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-            <div className="absolute top-3 right-3 p-2 bg-black/50 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+
+            {/* overlay */}
+            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
+
+            <div className="absolute top-3 right-3 bg-black/60 p-2 rounded-lg opacity-0 group-hover:opacity-100 transition">
               <Maximize2 className="w-4 h-4 text-white" />
             </div>
           </button>
@@ -54,9 +50,8 @@ export function ImageGallery({ images, title }: ImageGalleryProps) {
       {selectedIndex !== null && (
         <ImageModal
           images={images}
-          title={title}
           initialIndex={selectedIndex}
-          onClose={closeModal}
+          onClose={() => setSelectedIndex(null)}
         />
       )}
     </>

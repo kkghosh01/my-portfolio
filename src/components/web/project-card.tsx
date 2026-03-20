@@ -47,7 +47,7 @@ export default function ProjectCard({ project }: ProjectCardProps) {
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             loading="eager"
             quality={75}
-            className="object-cover transition-transform group-hover:scale-105"
+            className="object-cover object-top transition-transform group-hover:scale-105"
           />
         </div>
 

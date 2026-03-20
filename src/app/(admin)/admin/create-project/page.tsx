@@ -71,38 +71,40 @@ export default function CreateProjectPage() {
   }
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const files = Array.from(e.target.files || []);
+    const selectedFiles = Array.from(e.target.files || []);
     setImageError(null);
 
-    if (files.length === 0) {
-      setImagePreviews([]);
-      form.setValue("images", []);
+    if (selectedFiles.length === 0) return;
+
+    const currentFiles = form.getValues("images") || [];
+    const totalFiles = currentFiles.length + selectedFiles.length;
+
+    if (totalFiles > 3) {
+      setImageError("Max 3 images allowed");
       return;
     }
 
-    if (files.length > 3) {
-      setImageError("Maximum 3 images allowed");
-      toast.error("Too many images", {
-        description: "You can upload up to 3 images.",
-      });
-      return;
-    }
+    const newFiles: File[] = [...currentFiles];
+    const newPreviews: string[] = [...imagePreviews];
 
-    const MAX_SIZE = 1024 * 1024; // 1MB
-    const validFiles: File[] = [];
-    const previews: string[] = [];
-
-    for (const file of files) {
-      if (file.size > MAX_SIZE) {
-        setImageError(`${file.name} is too large (max 1MB)`);
+    for (const file of selectedFiles) {
+      if (file.size > 2 * 1024 * 1024) {
+        setImageError(`File ${file.name} is too large (max 2MB)`);
         return;
       }
-      validFiles.push(file);
-      previews.push(URL.createObjectURL(file)); // FileReader
+      if (!file.type.startsWith("image/")) {
+        setImageError(`File ${file.name} is not an image`);
+        return;
+      }
+      newFiles.push(file);
+      newPreviews.push(URL.createObjectURL(file));
     }
 
-    setImagePreviews(previews);
-    form.setValue("images", validFiles);
+    setImagePreviews(newPreviews);
+    form.setValue("images", newFiles);
+
+    // Reset input value so the same file can be selected again if removed
+    e.target.value = "";
   }
   function onSubmit(values: z.infer<typeof projectSchema>) {
     startTransition(async () => {
@@ -383,6 +385,11 @@ export default function CreateProjectPage() {
                               onClick={() => {
                                 const currentImages =
                                   form.getValues("images") || [];
+
+                                // Revoke the URL to avoid memory leaks
+                                if (imagePreviews[index]) {
+                                  URL.revokeObjectURL(imagePreviews[index]);
+                                }
 
                                 const newFiles = currentImages.filter(
                                   (_, i) => i !== index,

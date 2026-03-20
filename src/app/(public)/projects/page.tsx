@@ -67,7 +67,7 @@ async function LoadProjectsList() {
                 alt={project.title}
                 fill
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                className="object-cover transition-transform duration-500 group-hover:scale-110"
+                className="object-cover object-top transition-transform duration-500 group-hover:scale-110"
                 loading="eager"
               />
               <div className="absolute inset-0 bg-linear-to-t from-black/10 via-transparent to-transparent" />
