@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Breadcrumbs from "@/components/web/breadcrumbs";
 
 import {
   Rocket,
@@ -34,7 +35,10 @@ export default function AboutPage() {
   ];
 
   return (
-    <section className="w-full bg-background text-foreground py-24">
+    <section className="w-full bg-background text-foreground py-10">
+      <div className="max-w-6xl mx-auto px-6 mb-8">
+        <Breadcrumbs />
+      </div>
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center px-6">
         {/* Profile Image */}
         <motion.div

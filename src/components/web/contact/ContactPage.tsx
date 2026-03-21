@@ -13,6 +13,7 @@ import { useTransition } from "react";
 import type { z } from "zod";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
+import Breadcrumbs from "@/components/web/breadcrumbs";
 
 export default function ContactPage() {
   const createContact = useMutation(api.contacts.createContact); // Convex mutation [cite: 6]
@@ -35,6 +36,9 @@ export default function ContactPage() {
   }
   return (
     <div className="py-10">
+      <div className="max-w-2xl mx-auto px-4 mb-8">
+        <Breadcrumbs />
+      </div>
       <div className="text-center mb-10">
         <h1 className="text-4xl font-extrabold tracking-tight">Contact Me</h1>
         <p className="text-xl text-muted-foreground mt-4">

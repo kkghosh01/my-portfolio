@@ -21,13 +21,22 @@ export const getDashboardStats = query({
     const totalPosts = await ctx.db.query("posts").collect();
     const totalProjects = await ctx.db.query("projects").collect();
     const totalMessages = await ctx.db.query("contacts").collect();
+    const allComments = await ctx.db.query("comments").collect();
 
     // Calculate totals
     const totalViews = totalPosts.reduce((acc, post) => acc + (post.views ?? 0), 0);
     const totalLikes = totalPosts.reduce((acc, post) => acc + (post.likes ?? 0), 0);
     const newMessages = totalMessages.filter(m => m.status === "new").length;
 
-    // Get recent activity (mix of posts, projects, messages)
+    // Comment stats
+    const now = Date.now();
+    const todayStart = new Date().setHours(0, 0, 0, 0);
+    const weekStart = now - 7 * 24 * 60 * 60 * 1000;
+
+    const commentsToday = allComments.filter(c => c.createdAt >= todayStart).length;
+    const commentsThisWeek = allComments.filter(c => c.createdAt >= weekStart).length;
+
+    // Get recent activity (mix of posts, projects, messages, comments)
     const recentPosts = await ctx.db
       .query("posts")
       .order("desc")
@@ -40,6 +49,11 @@ export const getDashboardStats = query({
 
     const recentMessages = await ctx.db
       .query("contacts")
+      .order("desc")
+      .take(5);
+
+    const recentComments = await ctx.db
+      .query("comments")
       .order("desc")
       .take(5);
 
@@ -66,7 +80,17 @@ export const getDashboardStats = query({
         status: m.status,
         date: m.createdAt,
       })),
-    ].sort((a, b) => b.date - a.date).slice(0, 10);
+      ...recentComments.map(c => ({
+        id: c._id,
+        type: "comment" as const,
+        title: `Comment by ${c.name}`,
+        status: "new",
+        date: c.createdAt,
+        email: c.email,
+        comment: c.comment,
+        postId: c.postId,
+      })),
+    ].sort((a, b) => b.date - a.date).slice(0, 15);
 
     return {
       stats: {
@@ -76,6 +100,9 @@ export const getDashboardStats = query({
         views: totalViews,
         likes: totalLikes,
         newMessages,
+        totalComments: allComments.length,
+        commentsToday,
+        commentsThisWeek,
       },
       activities,
     };

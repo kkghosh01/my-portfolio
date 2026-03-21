@@ -6,8 +6,12 @@ import type { Metadata } from "next";
 import { api } from "../../../../../convex/_generated/api";
 import { incrementView } from "@/lib/increment-view";
 import { LikeButton } from "@/components/web/likeButton";
+import { CommentForm } from "@/components/web/blog/CommentForm";
+import { CommentList } from "@/components/web/blog/CommentList";
 import Link from "next/link";
 import { User } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import Breadcrumbs from "@/components/web/breadcrumbs";
 
 export const dynamic = "force-dynamic";
 
@@ -58,6 +62,9 @@ export default async function BlogDetails({ params }: PageProps) {
 
   return (
     <article className="max-w-3xl mx-auto py-12 px-4 sm:px-6">
+      <div className="mb-8">
+        <Breadcrumbs />
+      </div>
       <Link
         href="/blog"
         className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-300 mb-8 transition-colors group"
@@ -134,12 +141,33 @@ export default async function BlogDetails({ params }: PageProps) {
       )}
 
       <div
-        className="prose prose-lg dark:prose-invert max-w-none"
+        className="
+            prose 
+            dark:prose-invert 
+            max-w-none
+            leading-7
+            prose-p:my-2
+            prose-li:my-1
+            prose-ul:my-2
+            prose-h2:mt-4 prose-h2:mb-2
+            prose-h3:mt-3 prose-h3:mb-1
+          "
         dangerouslySetInnerHTML={{ __html: post.content }}
       />
 
       <div className="pt-8 border-t border-gray-200 dark:border-gray-800">
         <LikeButton postId={post._id} initialLikes={post.likes ?? 0} />
+      </div>
+
+      <div className="space-y-10">
+        <Separator className="opacity-50" />
+        <section id="comments" className="space-y-10">
+          <div className="pt-8 border-t">
+            <h3 className="text-xl font-bold mb-6">Leave a comment</h3>
+            <CommentForm postId={post._id} />
+          </div>
+          <CommentList postId={post._id} />
+        </section>
       </div>
     </article>
   );

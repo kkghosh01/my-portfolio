@@ -13,6 +13,7 @@ import {
   ChartBarStacked,
   ChevronLeft,
   MessageSquare,
+  BarChart3,
 } from "lucide-react";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import Link from "next/link";
@@ -71,6 +72,13 @@ function SidebarContent({ collapsed }: { collapsed?: boolean }) {
             icon={LayoutDashboard}
             label="Dashboard"
             active={pathname === "/dashboard"}
+            collapsed={collapsed}
+          />
+          <SidebarItem
+            href="/dashboard/stats"
+            icon={BarChart3}
+            label="Analytics"
+            active={pathname === "/dashboard/stats"}
             collapsed={collapsed}
           />
           <SidebarItem

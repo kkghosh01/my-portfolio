@@ -70,10 +70,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${interSans.variable} ${geistMono.variable}`}
+      suppressHydrationWarning
+    >
       <body
         suppressHydrationWarning
-        className={`${interSans.variable} ${geistMono.variable} antialiased`}
+        className={`${interSans.variable} ${geistMono.variable} font-sans antialiased`}
       >
         <ThemeProvider
           attribute="class"

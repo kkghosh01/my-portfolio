@@ -5,6 +5,7 @@ import { api } from "../../../../../convex/_generated/api";
 import { User, Calendar, ExternalLink, Github } from "lucide-react";
 import { ImageGallery } from "@/components/web/ImageGallery";
 import { Metadata } from "next/dist/lib/metadata/types/metadata-interface";
+import Breadcrumbs from "@/components/web/breadcrumbs";
 // import { ImageGallery } from "@/components/ImageGallery";
 
 interface PageProps {
@@ -51,6 +52,9 @@ export default async function ProjectDetailsPage({
   return (
     <article className="min-h-screen">
       <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
+        <div className="mb-8">
+          <Breadcrumbs />
+        </div>
         {/* Header */}
         <header className="mb-8 sm:mb-12">
           <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6 mb-8">
@@ -156,7 +160,19 @@ export default async function ProjectDetailsPage({
 
         {/* Content */}
         <div className="mt-10 sm:mt-12 lg:mt-16">
-          <div className="prose prose-lg dark:prose-invert max-w-none">
+          <div
+            className="
+            prose 
+            dark:prose-invert 
+            max-w-none    
+            leading-7
+            prose-p:my-2
+            prose-li:my-1
+            prose-ul:my-2
+            prose-h2:mt-4 prose-h2:mb-2
+            prose-h3:mt-3 prose-h3:mb-1
+          "
+          >
             <div className="bg-white dark:bg-gray-800/50 rounded-2xl p-6 sm:p-8 shadow-lg">
               <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
                 Project Overview
@@ -164,7 +180,7 @@ export default async function ProjectDetailsPage({
 
               <div className="space-y-6 text-gray-700 dark:text-gray-300">
                 <div
-                  className="prose prose-lg dark:prose-invert max-w-none"
+                  className="prose prose-lg dark:prose-invert max-w-none line-height-1.5 leading-relaxed"
                   dangerouslySetInnerHTML={{ __html: project.projectDetails }}
                 />
 

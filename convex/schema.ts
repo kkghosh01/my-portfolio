@@ -128,4 +128,14 @@ export default defineSchema({
     }),
     updatedAt: v.number(),
   }),
+
+  comments: defineTable({
+    postId: v.id("posts"),
+    name: v.string(),
+    email: v.string(),
+    comment: v.string(),
+    createdAt: v.number(),
+  })
+    .index("by_post", ["postId"])
+    .index("by_created", ["createdAt"]),
 });

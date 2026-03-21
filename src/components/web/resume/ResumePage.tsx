@@ -1,10 +1,14 @@
 "use client";
 
 import DownloadCVButton from "@/components/web/DownloadCVButton";
+import Breadcrumbs from "@/components/web/breadcrumbs";
 
 export default function Resume() {
   return (
     <div className="bg-gray-50 min-h-screen p-6 text-gray-800">
+      <div className="max-w-4xl mx-auto mb-6">
+        <Breadcrumbs />
+      </div>
       <main className="max-w-4xl mx-auto bg-white p-8 shadow-sm">
         {/* Top bar */}
         <div className="flex justify-end mb-4">

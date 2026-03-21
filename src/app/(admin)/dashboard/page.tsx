@@ -9,6 +9,7 @@ import {
   Heart,
   Calendar,
   ArrowUpRight,
+  BarChart3,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -90,34 +91,60 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Welcome back! Here's what's happening with your portfolio.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Welcome back! Here's what's happening with your portfolio.
+          </p>
+        </div>
+        <Button asChild className="shrink-0 gap-2">
+          <Link href="/dashboard/stats">
+            <BarChart3 className="h-4 w-4" /> View Full Analytics
+          </Link>
+        </Button>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-2">
         <DashboardCard
           title="Total Posts"
           count={stats.posts}
           icon={FileText}
         />
         <DashboardCard title="Projects" count={stats.projects} icon={Layout} />
+        <DashboardCard title="Total Views" count={stats.views} icon={Eye} />
+        <DashboardCard title="Total Likes" count={stats.likes} icon={Heart} />
         <DashboardCard
           title="Messages"
           count={stats.messages}
           icon={MessageSquare}
         />
-        <DashboardCard title="Total Views" count={stats.views} icon={Eye} />
-        <DashboardCard title="Total Likes" count={stats.likes} icon={Heart} />
         <DashboardCard
-          title="New Messages"
-          count={stats.newMessages}
+          title="Total Comments"
+          count={stats.totalComments}
           icon={MessageSquare}
         />
       </div>
+
+      {/* Comment Stats Grid
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <DashboardCard
+          title="Total Comments"
+          count={stats.totalComments}
+          icon={MessageSquare}
+        />
+        <DashboardCard
+          title="Comments Today"
+          count={stats.commentsToday}
+          icon={Calendar}
+        />
+        <DashboardCard
+          title="Comments This Week"
+          count={stats.commentsThisWeek}
+          icon={Calendar}
+        />
+      </div> */}
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Recent Activity Table */}
@@ -149,8 +176,13 @@ export default async function AdminDashboardPage() {
                       key={activity.id}
                       className="hover:bg-muted/40 transition-colors"
                     >
-                      <td className="px-6 py-4 font-medium max-w-[200px] truncate">
-                        {activity.title}
+                      <td className="px-6 py-4 font-medium max-w-[250px]">
+                        <div className="truncate">{activity.title}</div>
+                        {activity.type === "comment" && (
+                          <div className="text-xs text-muted-foreground mt-1 line-clamp-1 italic">
+                            "{activity.comment}"
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <Badge variant="outline" className="capitalize">
@@ -158,17 +190,28 @@ export default async function AdminDashboardPage() {
                         </Badge>
                       </td>
                       <td className="px-6 py-4">
-                        <Badge
-                          className={
-                            activity.status === "published" ||
-                            activity.status === "replied"
-                              ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20"
-                              : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-amber-500/20"
-                          }
-                          variant="secondary"
-                        >
-                          {activity.status}
-                        </Badge>
+                        {activity.type === "comment" ? (
+                          <div className="flex flex-col text-xs gap-0.5">
+                            <span className="font-medium text-foreground">
+                              {activity.email}
+                            </span>
+                            <span className="text-muted-foreground opacity-70">
+                              ID: {activity.postId.slice(0, 8)}...
+                            </span>
+                          </div>
+                        ) : (
+                          <Badge
+                            className={
+                              activity.status === "published" ||
+                              activity.status === "replied"
+                                ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border-emerald-500/20"
+                                : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border-amber-500/20"
+                            }
+                            variant="secondary"
+                          >
+                            {activity.status}
+                          </Badge>
+                        )}
                       </td>
                       <td className="px-6 py-4 text-muted-foreground flex items-center gap-1.5 whitespace-nowrap">
                         <Calendar className="h-3.5 w-3.5" />
@@ -201,6 +244,15 @@ export default async function AdminDashboardPage() {
               >
                 <Link href="/admin/create-project">
                   <Layout className="h-4 w-4" /> Add New Project
+                </Link>
+              </Button>
+              <Button
+                asChild
+                variant="secondary"
+                className="w-full justify-start gap-2 h-11 border-primary/20 hover:bg-primary/10 transition-colors"
+              >
+                <Link href="/dashboard/stats">
+                  <BarChart3 className="h-4 w-4" /> Analytics Overview
                 </Link>
               </Button>
             </CardContent>
