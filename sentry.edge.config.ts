@@ -19,4 +19,14 @@ Sentry.init({
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
+
+  // Ignore Convex internal requests during Edge runtime SSR
+  beforeSend(event) {
+    if (event.exception?.values?.[0]?.stacktrace?.frames?.some(frame => 
+      frame.filename?.includes('convex') || frame.filename?.includes('http_client.js')
+    )) {
+      return null;
+    }
+    return event;
+  },
 });

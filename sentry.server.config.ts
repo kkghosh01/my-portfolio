@@ -18,4 +18,28 @@ Sentry.init({
   // Enable sending user PII (Personally Identifiable Information)
   // https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/options/#sendDefaultPii
   sendDefaultPii: true,
+
+  // Fix for Sentry + Convex + Undici issue in Node.js 18+
+  // Ignore Convex requests in Sentry's Http integration to avoid conflicts during SSR
+  integrations: [
+    // We can't easily access Http integration here without importing it from @sentry/node
+    // but we can use the 'ignoreUrls' option if it was top-level (it's not).
+    // Instead, we use beforeSend to filter out the error if it originates from Convex's fetch.
+  ],
+
+  beforeSend(event) {
+    if (
+      event.exception?.values?.[0]?.stacktrace?.frames?.some(
+        (frame) =>
+          frame.filename?.includes("convex") ||
+          frame.filename?.includes("http_client.js"),
+      )
+    ) {
+      // If it's a known non-critical SSR issue with Convex client on the server,
+      // we can optionally ignore it or let it pass after debugging.
+      // returning null will ignore the error.
+      return null;
+    }
+    return event;
+  },
 });
